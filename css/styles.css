@@ -711,3 +711,69 @@ body {
   padding-left: 0;
   border-left: none;
 }
+
+/* ---------- Master List colour coding ----------
+   One colour per Type (spreadsheet column D). Each master row gets a
+   stripe down its left edge, a faint tint, and a matching type tag. */
+
+:root {
+  --c-film: #e23636;
+  --c-tvseries: #2f6fde;
+  --c-short: #e07b00;
+  --c-special: #8a4fd6;
+  --c-digital: #0f9a9a;
+  --c-ncufilm: #6f7d8c;
+  --c-ncutv: #3d9a3d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-film: #ff5c5c;
+    --c-tvseries: #5b93ff;
+    --c-short: #ffa23a;
+    --c-special: #b38cff;
+    --c-digital: #3cc8c8;
+    --c-ncufilm: #9aa7b5;
+    --c-ncutv: #66c266;
+  }
+}
+
+.cat-film { --cat: var(--c-film); }
+.cat-tvseries { --cat: var(--c-tvseries); }
+.cat-short { --cat: var(--c-short); }
+.cat-special { --cat: var(--c-special); }
+.cat-digital { --cat: var(--c-digital); }
+.cat-ncufilm { --cat: var(--c-ncufilm); }
+.cat-ncutv { --cat: var(--c-ncutv); }
+
+.master-row {
+  box-shadow: inset 5px 0 0 var(--cat);
+  background: color-mix(in srgb, var(--cat) 7%, var(--grouped-bg));
+}
+
+.master-row:active {
+  background: color-mix(in srgb, var(--cat) 16%, var(--grouped-bg));
+}
+
+.master-row .type-tag,
+.legend-chip {
+  background: color-mix(in srgb, var(--cat) 18%, transparent);
+  color: color-mix(in srgb, var(--cat) 80%, var(--label));
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: -0.3rem 0 0.9rem;
+}
+
+.legend-chip {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border-left: 4px solid var(--cat);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}

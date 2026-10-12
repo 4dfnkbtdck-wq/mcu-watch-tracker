@@ -46,7 +46,9 @@
       upcoming: row.d > TODAY,
       title: extra ? extra.title : item.title,
       detail: "",
-      type: extra ? (extra.seasons ? "Spin-off" : "TV Movie") : typeLabel(item),
+      // Colour-coding category: the title's Type, except that a spin-off
+      // web series (Slingshot) counts as a Digital Series, as in the spreadsheet.
+      cat: extra && extra.seasons ? getCategory("digital") : getCategory(item.cat),
       keys: [],
     };
 
@@ -77,6 +79,18 @@
   function visibleEntries() {
     const test = FILTERS.find((f) => f.id === filter).test;
     return ENTRIES.filter((en) => test(en.item));
+  }
+
+  // Colour key: one chip per Type, in that Type's colour.
+  function buildLegend() {
+    const legend = document.getElementById("m-legend");
+    legend.innerHTML = "";
+    CATEGORIES.forEach((cat) => {
+      const chip = document.createElement("span");
+      chip.className = "legend-chip cat-" + cat.id;
+      chip.textContent = cat.short;
+      legend.appendChild(chip);
+    });
   }
 
   function buildSegmented() {
@@ -147,7 +161,7 @@
     const value = isSeen(entry);
 
     const row = document.createElement("li");
-    row.className = "title-row master-row" + (entry.upcoming ? " upcoming" : "");
+    row.className = "title-row master-row cat-" + entry.cat.id + (entry.upcoming ? " upcoming" : "");
     row.id = entry.domId;
 
     const num = document.createElement("span");
@@ -171,8 +185,8 @@
     const meta = document.createElement("div");
     meta.className = "title-meta";
     const tag = document.createElement("span");
-    tag.className = "type-tag type-" + entry.type.toLowerCase().replace(/\s+/g, "-");
-    tag.textContent = entry.type;
+    tag.className = "type-tag";
+    tag.textContent = entry.cat.short;
     meta.appendChild(tag);
     const where = item.phase ? "Phase " + item.phase : item.group ? item.group.split(" · ")[0] : "";
     meta.appendChild(document.createTextNode((entry.upcoming ? "Coming " + formatDate(entry.date) : formatDate(entry.date)) + (where ? " · " + where : "")));
@@ -273,5 +287,6 @@
     render();
   });
 
+  buildLegend();
   Views.master = { render };
 })();
