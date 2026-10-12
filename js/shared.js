@@ -109,6 +109,35 @@ function findNextEpisode(seasons, prefix, seen) {
   return null;
 }
 
+// Today's local date as YYYY-MM-DD. Anything dated after it isn't out yet.
+const TODAY = (function () {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+})();
+
+const DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+function formatDate(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return DATE_FORMAT.format(new Date(Date.UTC(y, m - 1, d)));
+}
+
+// A title is upcoming until its release date (or, with no date, while
+// it carries an "upcoming" label).
+function isUpcoming(item) {
+  return item.date ? item.date > TODAY : !!item.upcoming;
+}
+
+function upcomingLabel(item) {
+  return item.upcoming || "Coming " + formatDate(item.date);
+}
+
 function compareRelease(a, b) {
   if (a.date && b.date) return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
   return a.year - b.year;

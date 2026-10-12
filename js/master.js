@@ -31,18 +31,6 @@
     saveSeen();
   }
 
-  const DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-
-  function formatDate(iso) {
-    const [y, m, d] = iso.split("-").map(Number);
-    return DATE_FORMAT.format(new Date(Date.UTC(y, m - 1, d)));
-  }
-
   // One entry per MASTER_LIST row: what to show and the storage keys
   // it covers (one key, except a whole-season row for an older show).
   const ENTRIES = MASTER_LIST.map((row, idx) => {
@@ -54,6 +42,8 @@
       domId: "row-" + idx,
       item,
       date: row.d,
+      // Upcoming per row, so a show's episodes unlock one air date at a time.
+      upcoming: row.d > TODAY,
       title: extra ? extra.title : item.title,
       detail: "",
       type: extra ? (extra.seasons ? "Spin-off" : "TV Movie") : typeLabel(item),
@@ -106,7 +96,7 @@
   }
 
   function updateSummary(entries) {
-    const released = entries.filter((en) => !en.item.upcoming);
+    const released = entries.filter((en) => !en.upcoming);
     const seenCount = released.filter(isSeen).length;
     const pct = released.length ? Math.round((seenCount / released.length) * 100) : 0;
     progressFill.style.width = pct + "%";
@@ -124,8 +114,10 @@
     sub.className = "up-next-sub";
     if (!next) {
       title.textContent = "You're all caught up!";
-      const coming = entries.find((en) => en.item.upcoming);
-      sub.textContent = coming ? "Next up: " + coming.title + " — " + coming.item.upcoming : "";
+      const coming = entries.find((en) => en.upcoming);
+      sub.textContent = coming
+        ? "Next up: " + coming.title + (coming.detail ? " · " + coming.detail : "") + " — " + formatDate(coming.date)
+        : "";
     } else {
       title.textContent = next.title;
       sub.textContent = [next.detail, formatDate(next.date)].filter(Boolean).join(" · ");
@@ -155,7 +147,7 @@
     const value = isSeen(entry);
 
     const row = document.createElement("li");
-    row.className = "title-row master-row" + (item.upcoming ? " upcoming" : "");
+    row.className = "title-row master-row" + (entry.upcoming ? " upcoming" : "");
     row.id = entry.domId;
 
     const num = document.createElement("span");
@@ -183,13 +175,13 @@
     tag.textContent = entry.type;
     meta.appendChild(tag);
     const where = item.phase ? "Phase " + item.phase : item.group ? item.group.split(" · ")[0] : "";
-    meta.appendChild(document.createTextNode((item.upcoming ? item.upcoming : formatDate(entry.date)) + (where ? " · " + where : "")));
+    meta.appendChild(document.createTextNode((entry.upcoming ? "Coming " + formatDate(entry.date) : formatDate(entry.date)) + (where ? " · " + where : "")));
     info.appendChild(meta);
 
     row.appendChild(num);
     row.appendChild(info);
 
-    if (item.upcoming) {
+    if (entry.upcoming) {
       const soon = document.createElement("span");
       soon.className = "soon-pill";
       soon.textContent = "Soon";
@@ -221,7 +213,7 @@
       ev.stopPropagation();
       if (!confirm("Mark everything from #1 to #" + number + " as watched?")) return;
       entries.slice(0, number).forEach((en) => {
-        if (!en.item.upcoming) setSeen(en, true);
+        if (!en.upcoming) setSeen(en, true);
       });
       save();
       render();

@@ -32,8 +32,10 @@
 //            show is expanded (-1 = before season 1; default: the end)
 //   group    studio / network / franchise label shown under the title
 //   kind     "Short", "Special", "Digital Series" or "Animated"
-//   upcoming display string for unreleased titles; they're shown but
-//            can't be checked off and don't count toward progress
+//   upcoming display string for a title that isn't out yet. Anything
+//            dated after today is treated as upcoming (shown, but can't
+//            be checked off and doesn't count toward progress) — so
+//            titles unlock by themselves on release day.
 //   note     extra context shown under the row
 //
 // Within each tab, titles are listed in release order — the "Oldest
@@ -155,7 +157,7 @@ const TITLES = [
   { id: "ironheart", cat: "tvseries", title: "Ironheart", year: 2025, date: "2025-06-24", phase: 5, t: 58, seasons: [6] },
   { id: "marvel-zombies", cat: "tvseries", kind: "Animated", title: "Marvel Zombies", year: 2025, date: "2025-09-24", phase: 6, t: 32.6, seasons: [4], note: "Spins out of What If...? season 1, episode 5." },
   { id: "wonder-man", cat: "tvseries", title: "Wonder Man", year: 2026, date: "2026-01-27", phase: 6, t: 59, seasons: [8] },
-  { id: "visionquest", cat: "tvseries", title: "VisionQuest", year: 2026, date: "2026-12-01", phase: 6, t: 62, upcoming: "Coming to Disney+ late 2026" },
+  { id: "visionquest", cat: "tvseries", title: "VisionQuest", year: 2026, date: "2026-10-13", phase: 6, t: 62, seasons: [8], upcoming: "Premieres Oct 13, 2026 on Disney+" },
 
   // ---------- MCU Specials & Shorts ----------
   { id: "one-shot-consultant", cat: "short", kind: "Short", title: "The Consultant", year: 2011, date: "2011-09-13", phase: 1, t: 7, note: "Marvel One-Shot." },

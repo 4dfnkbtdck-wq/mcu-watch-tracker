@@ -273,9 +273,9 @@
 
       const row = document.createElement("li");
       row.className =
-        "title-row" + (isExpanded ? " expanded" : "") + (item.upcoming ? " upcoming" : "");
+        "title-row" + (isExpanded ? " expanded" : "") + (isUpcoming(item) ? " upcoming" : "");
       row.id = "title-" + item.id;
-      if (!item.upcoming) {
+      if (!isUpcoming(item)) {
         row.setAttribute("role", "checkbox");
         row.setAttribute("aria-checked", String(state.seen));
       }
@@ -299,10 +299,10 @@
         info.appendChild(metaEl);
       }
 
-      if (item.upcoming) {
+      if (isUpcoming(item)) {
         const upEl = document.createElement("div");
         upEl.className = "title-upcoming";
-        upEl.textContent = item.upcoming;
+        upEl.textContent = upcomingLabel(item);
         info.appendChild(upEl);
       } else if (state.stats) {
         const prog = document.createElement("div");
@@ -328,7 +328,7 @@
         row.appendChild(chevron);
       }
 
-      if (item.upcoming) {
+      if (isUpcoming(item)) {
         const soon = document.createElement("span");
         soon.className = "soon-pill";
         soon.textContent = "Soon";
@@ -363,7 +363,7 @@
   }
 
   function updateProgress(cat) {
-    const released = titlesIn(cat.id).filter((t) => !t.upcoming);
+    const released = titlesIn(cat.id).filter((t) => !isUpcoming(t));
     const seenCount = released.filter((t) => titleState(t, seen).seen).length;
     const pct = released.length ? Math.round((seenCount / released.length) * 100) : 0;
     progressFill.style.width = pct + "%";
@@ -387,7 +387,7 @@
     const cat = getCategory(currentCategoryId);
     if (!confirm("Mark everything in " + cat.name + " as seen?")) return;
     titlesIn(cat.id)
-      .filter((t) => !t.upcoming)
+      .filter((t) => !isUpcoming(t))
       .forEach((t) => setTitleSeen(t, seen, true));
     save();
     render();

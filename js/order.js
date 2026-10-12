@@ -88,7 +88,7 @@
   }
 
   function renderUpNext(entries) {
-    const next = entries.find((en) => !en.item.upcoming && !entryState(en).seen);
+    const next = entries.find((en) => !isUpcoming(en.item) && !entryState(en).seen);
     upNextEl.innerHTML = "";
     upNextEl.onclick = null;
 
@@ -102,8 +102,8 @@
 
     if (!next) {
       title.textContent = "You're all caught up!";
-      const coming = entries.find((en) => en.item.upcoming);
-      sub.textContent = coming ? "Next up: " + coming.title + " — " + coming.item.upcoming : "";
+      const coming = entries.find((en) => isUpcoming(en.item));
+      sub.textContent = coming ? "Next up: " + coming.title + " — " + upcomingLabel(coming.item) : "";
     } else {
       title.textContent = next.title;
       const parts = [next.type || typeLabel(next.item)];
@@ -139,7 +139,7 @@
       shown++;
 
       const row = document.createElement("li");
-      row.className = "title-row" + (item.upcoming ? " upcoming" : "");
+      row.className = "title-row" + (isUpcoming(item) ? " upcoming" : "");
       row.id = "order-" + entry.domId;
 
       const num = document.createElement("span");
@@ -175,10 +175,10 @@
       );
       info.appendChild(meta);
 
-      if (item.upcoming) {
+      if (isUpcoming(item)) {
         const upEl = document.createElement("div");
         upEl.className = "title-upcoming";
-        upEl.textContent = item.upcoming;
+        upEl.textContent = upcomingLabel(item);
         info.appendChild(upEl);
       } else if (entry.keys.length > 1) {
         const prog = document.createElement("div");
@@ -192,7 +192,7 @@
       row.appendChild(num);
       row.appendChild(info);
 
-      if (item.upcoming) {
+      if (isUpcoming(item)) {
         const soon = document.createElement("span");
         soon.className = "soon-pill";
         soon.textContent = "Soon";
@@ -233,7 +233,7 @@
       orderList.appendChild(li);
     }
 
-    const released = entries.filter((en) => !en.item.upcoming);
+    const released = entries.filter((en) => !isUpcoming(en.item));
     const seenCount = released.filter((en) => entryState(en).seen).length;
     const pct = released.length ? Math.round((seenCount / released.length) * 100) : 0;
     progressFill.style.width = pct + "%";

@@ -91,6 +91,14 @@ EXTRA_SHOWS = {"Agents of S.H.I.E.L.D.: Slingshot": ("agents-of-shield", 0)}
 # (date, segment) for data.js titles the spreadsheet doesn't list.
 EXTRA_SEGMENTS = [
     ("2026-05-12", {"id": "punisher-one-last-kill"}),
+    ("2026-10-13", {"id": "visionquest", "s": 0, "e": 1}),
+    ("2026-10-13", {"id": "visionquest", "s": 0, "e": 2}),
+    ("2026-10-20", {"id": "visionquest", "s": 0, "e": 3}),
+    ("2026-10-20", {"id": "visionquest", "s": 0, "e": 4}),
+    ("2026-10-27", {"id": "visionquest", "s": 0, "e": 5}),
+    ("2026-10-27", {"id": "visionquest", "s": 0, "e": 6}),
+    ("2026-11-03", {"id": "visionquest", "s": 0, "e": 7}),
+    ("2026-11-10", {"id": "visionquest", "s": 0, "e": 8}),
 ]
 
 # Corrections to spreadsheet dates: film id -> date, or exact
@@ -106,7 +114,6 @@ DATE_FIXES = {
 # Released after the spreadsheet's last row, or not out yet.
 TAIL_SEGMENTS = [
     {"id": "brand-new-day"},
-    {"id": "visionquest"},
     {"id": "avengers-doomsday"},
     {"id": "avengers-secret-wars"},
 ]
