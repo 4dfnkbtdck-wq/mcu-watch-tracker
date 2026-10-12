@@ -1,6 +1,6 @@
 // Shared helpers for reading MCU Watch Tracker data and localStorage
-// state. Used by both the main tracker (js/app.js) and the Watch Order
-// page (js/order.js) — load this after data.js and before either.
+// state, used by all three views (js/master.js, js/app.js, js/order.js)
+// — load this after the data files and before any of them.
 
 const STORAGE_SEEN = "mcu-tracker:seen";
 
@@ -19,6 +19,21 @@ function loadJson(key, fallback) {
     return fallback;
   }
 }
+
+// The one checkmark map every view reads and writes. Views are all on
+// one page, so they share this object directly; saveSeen() persists it
+// and bumps seenVersion so a hidden view knows to redraw when shown.
+const seen = loadJson(STORAGE_SEEN, {});
+let seenVersion = 0;
+
+function saveSeen() {
+  localStorage.setItem(STORAGE_SEEN, JSON.stringify(seen));
+  seenVersion++;
+}
+
+// Each view script registers itself here as { render(), ... } — see
+// js/main.js, which switches between them.
+const Views = {};
 
 function episodeKey(prefix, seasonIdx, epNum) {
   return prefix + ":s" + seasonIdx + ":e" + epNum;

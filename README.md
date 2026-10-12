@@ -41,7 +41,9 @@ worker caches the app so it keeps working with no signal.
 
 ## Using it
 
-The app has three tabs along the bottom.
+The app has three tabs along the bottom. They all live on one page, so
+switching is instant and each tab remembers where you'd scrolled to;
+tapping the tab you're already on scrolls back to the top.
 
 **Master List** (the home screen) works like the spreadsheet: every
 film, short, and TV episode, MCU or not, one row each, in release
@@ -105,6 +107,6 @@ from the list, listing what needs fixing (usually a new entry in its
 `FILM_IDS` / `SHOW_IDS` maps). Film release dates come from `data.js`
 where it has them; spreadsheet typos are corrected in its `DATE_FIXES`.
 
-After any change to CSS or JS, bump the `?v=` numbers in all three HTML pages
+After any change to CSS or JS, bump the `?v=` numbers in `index.html`
 and the matching entries and `CACHE_VERSION` in `sw.js`, or phones with
 the app installed may keep the old version.

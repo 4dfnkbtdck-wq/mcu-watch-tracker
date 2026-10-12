@@ -5,10 +5,10 @@
   const STORAGE_HIDE_SEEN = "mcu-tracker:hide-seen";
 
   const orderSegmented = document.getElementById("order-segmented");
-  const progressFill = document.getElementById("progress-fill");
-  const progressLabel = document.getElementById("progress-label");
-  const upNextEl = document.getElementById("up-next");
-  const hideSeenBtn = document.getElementById("hide-seen-toggle");
+  const progressFill = document.getElementById("o-progress-fill");
+  const progressLabel = document.getElementById("o-progress-label");
+  const upNextEl = document.getElementById("o-up-next");
+  const hideSeenBtn = document.getElementById("o-hide-seen");
   const orderList = document.getElementById("order-list");
   const orderNote = document.getElementById("order-note");
 
@@ -20,14 +20,13 @@
   const titlesById = {};
   TITLES.forEach((t) => (titlesById[t.id] = t));
 
-  let seen = loadJson(STORAGE_SEEN, {});
   let order = ORDERS.some((o) => o.id === localStorage.getItem(STORAGE_ORDER))
     ? localStorage.getItem(STORAGE_ORDER)
     : "release";
   let hideSeen = localStorage.getItem(STORAGE_HIDE_SEEN) === "1";
 
   function save() {
-    localStorage.setItem(STORAGE_SEEN, JSON.stringify(seen));
+    saveSeen();
   }
 
   // Every row on the page is an "entry": what to show, plus the
@@ -218,7 +217,7 @@
         // Whole series (MCU orders) open on the main page for
         // episode-by-episode tracking; every other row is one tap.
         row.addEventListener("click", () => {
-          if (entry.opensShow) location.href = "titles.html?open=" + encodeURIComponent(item.id);
+          if (entry.opensShow) openTitle(item.id);
           else check.click();
         });
       }
@@ -246,5 +245,5 @@
     render();
   });
 
-  render();
+  Views.order = { render };
 })();

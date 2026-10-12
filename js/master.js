@@ -4,13 +4,13 @@
   const STORAGE_FILTER = "mcu-tracker:master-filter";
   const STORAGE_HIDE_SEEN = "mcu-tracker:master-hide-seen";
 
-  const filterSegmented = document.getElementById("filter-segmented");
-  const progressFill = document.getElementById("progress-fill");
-  const progressLabel = document.getElementById("progress-label");
-  const upNextEl = document.getElementById("up-next");
-  const searchInput = document.getElementById("search");
-  const hideSeenBtn = document.getElementById("hide-seen-toggle");
-  const masterList = document.getElementById("master-list");
+  const filterSegmented = document.getElementById("m-filter-segmented");
+  const progressFill = document.getElementById("m-progress-fill");
+  const progressLabel = document.getElementById("m-progress-label");
+  const upNextEl = document.getElementById("m-up-next");
+  const searchInput = document.getElementById("m-search");
+  const hideSeenBtn = document.getElementById("m-hide-seen");
+  const masterList = document.getElementById("m-list");
 
   const FILTERS = [
     { id: "all", label: "Everything", test: () => true },
@@ -21,7 +21,6 @@
   const titlesById = {};
   TITLES.forEach((t) => (titlesById[t.id] = t));
 
-  let seen = loadJson(STORAGE_SEEN, {});
   let filter = FILTERS.some((f) => f.id === localStorage.getItem(STORAGE_FILTER))
     ? localStorage.getItem(STORAGE_FILTER)
     : "all";
@@ -29,7 +28,7 @@
   let searchTerm = "";
 
   function save() {
-    localStorage.setItem(STORAGE_SEEN, JSON.stringify(seen));
+    saveSeen();
   }
 
   const DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
@@ -282,5 +281,5 @@
     render();
   });
 
-  render();
+  Views.master = { render };
 })();

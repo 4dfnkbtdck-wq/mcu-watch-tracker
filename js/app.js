@@ -6,16 +6,15 @@
   const STORAGE_EXPANDED = "mcu-tracker:expanded";
 
   const categorySegmented = document.getElementById("category-segmented");
-  const progressFill = document.getElementById("progress-fill");
-  const progressLabel = document.getElementById("progress-label");
-  const searchInput = document.getElementById("search");
+  const progressFill = document.getElementById("t-progress-fill");
+  const progressLabel = document.getElementById("t-progress-label");
+  const searchInput = document.getElementById("t-search");
   const sortToggle = document.getElementById("sort-toggle");
   const markAllBtn = document.getElementById("mark-all-seen");
   const clearAllBtn = document.getElementById("clear-all-seen");
   const titlesList = document.getElementById("titles-list");
   const categoryNote = document.getElementById("category-note");
 
-  let seen = loadJson(STORAGE_SEEN, {});
   let currentCategoryId = localStorage.getItem(STORAGE_CATEGORY) || CATEGORIES[0].id;
   // Per-tab sort: MCU tabs flip between release and timeline order,
   // the others between oldest and newest first.
@@ -23,20 +22,8 @@
   let searchTerm = "";
   let expanded = new Set(loadJson(STORAGE_EXPANDED, []));
 
-  // Deep link support (e.g. from the Watch Order page): ?open=<title id>
-  // selects that title's tab, searches for it, and expands it.
-  (function applyDeepLink() {
-    const id = new URLSearchParams(location.search).get("open");
-    const item = id && TITLES.find((t) => t.id === id);
-    if (!item) return;
-    currentCategoryId = item.cat;
-    localStorage.setItem(STORAGE_CATEGORY, currentCategoryId);
-    searchTerm = item.title;
-    if (item.seasons || item.extras) expanded.add(item.id);
-  })();
-
   function save() {
-    localStorage.setItem(STORAGE_SEEN, JSON.stringify(seen));
+    saveSeen();
   }
 
   function saveExpanded() {
@@ -416,12 +403,23 @@
     render();
   });
 
-  searchInput.value = searchTerm;
-  render();
-
-  const linked = new URLSearchParams(location.search).get("open");
-  if (linked) {
-    const el = document.getElementById("title-" + linked);
+  // Jump straight to one title (e.g. tapping a series on MCU Order):
+  // selects its tab, searches for it, expands it, and scrolls to it.
+  function open(id) {
+    const item = TITLES.find((t) => t.id === id);
+    if (!item) return;
+    currentCategoryId = item.cat;
+    localStorage.setItem(STORAGE_CATEGORY, currentCategoryId);
+    searchTerm = item.title;
+    searchInput.value = searchTerm;
+    if (item.seasons || item.extras) {
+      expanded.add(item.id);
+      saveExpanded();
+    }
+    render();
+    const el = document.getElementById("title-" + id);
     if (el) el.scrollIntoView({ block: "center" });
   }
+
+  Views.titles = { render, open };
 })();
