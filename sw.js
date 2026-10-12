@@ -2,7 +2,7 @@
 // content) changes — same discipline as the ?v= query strings the HTML
 // pages use. A new name here makes install() re-fetch everything fresh
 // and activate() drops the old cache instead of leaving it to grow.
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 const CACHE_NAME = `mcu-watch-tracker-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -10,17 +10,17 @@ const APP_SHELL = [
   "titles.html",
   "order.html",
   "manifest.webmanifest",
-  "css/styles.css?v=3",
-  "js/data.js?v=3",
-  "js/watchorder.js?v=3",
-  "js/shared.js?v=3",
-  "js/app.js?v=3",
-  "js/order.js?v=3",
-  "js/master.js?v=3",
-  "js/main.js?v=3",
-  "img/icon-180.png?v=3",
-  "img/icon-192.png?v=3",
-  "img/icon-512.png?v=3",
+  "css/styles.css?v=4",
+  "js/data.js?v=4",
+  "js/watchorder.js?v=4",
+  "js/shared.js?v=4",
+  "js/app.js?v=4",
+  "js/order.js?v=4",
+  "js/master.js?v=4",
+  "js/main.js?v=4",
+  "img/icon-180.png?v=4",
+  "img/icon-192.png?v=4",
+  "img/icon-512.png?v=4",
 ];
 
 self.addEventListener("install", (event) => {

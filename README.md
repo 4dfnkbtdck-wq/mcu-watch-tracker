@@ -57,16 +57,19 @@ order, numbered, with its release date, grouped under year headings.
 - **Hide Watched** trims the list down to what's left, and **Search**
   finds a title.
 
-**By Title** lists each film and show once, split into **Films /
-Series / Specials / Marvel TV / Legacy** tabs.
+**By Title** lists each film and show once, split into the
+spreadsheet's Type categories: **Film / TV Series / Short Film / TV
+Special / Digital Series / NCU Film / NCU TV Series** ("NCU" = not part
+of the MCU).
 
 - Tap a series to expand it into seasons and episodes. Tap an episode
   number to check it off, or a season header to check off (or clear)
   the whole season.
 - Some classic shows also list their pilot movies, reunion TV movies,
   and web spin-offs inside the expanded panel.
-- **Release Order / Timeline Order** (on the MCU tabs) flips between
-  release and story order; elsewhere it's **Oldest / Newest First**.
+- **Release Order / Timeline Order** (on the tabs that are all Marvel
+  Studios titles) flips between release and story order; elsewhere it's
+  **Oldest / Newest First**.
 - **Search** matches titles, years, phases ("phase 3"), and studios or
   networks ("netflix", "fox x-men").
 - **Mark All Seen / Clear All** apply to the current tab.

@@ -37,8 +37,10 @@
     render();
   }
 
+  // Timeline order is only offered on a tab where every title has a
+  // timeline position (i.e. Marvel Studios titles only).
   function sortModesFor(cat) {
-    return cat.mcu ? ["release", "timeline"] : ["oldest", "newest"];
+    return titlesIn(cat.id).every((t) => t.t != null) ? ["release", "timeline"] : ["oldest", "newest"];
   }
 
   function currentSort(cat) {
@@ -244,7 +246,7 @@
       categoryNote.classList.add("hidden");
     }
 
-    let items = titlesIn(cat.id);
+    let items = titlesIn(cat.id).sort(compareRelease);
     if (sort === "timeline") items.sort(compareTimeline);
     else if (sort === "newest") items.reverse();
 

@@ -45,7 +45,8 @@
   }
 
   function buildEntries() {
-    const items = TITLES.filter(isMcu);
+    // Marvel Studios titles — the ones with a timeline position.
+    const items = TITLES.filter((t) => t.t != null);
     items.sort(order === "timeline" ? compareTimeline : compareRelease);
     return items.map(wholeTitleEntry);
   }

@@ -52,7 +52,7 @@ function titlesIn(categoryId) {
 }
 
 function isMcu(item) {
-  return getCategory(item.cat).mcu === true;
+  return item.mcu != null ? item.mcu : getCategory(item.cat).mcu === true;
 }
 
 // How many of a seasons array's episodes are total / seen, where every

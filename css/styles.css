@@ -687,3 +687,12 @@ body {
 .master-row .order-num {
   cursor: pointer;
 }
+
+/* By Title has seven categories: let them wrap onto two rows. */
+#category-segmented {
+  flex-wrap: wrap;
+}
+
+#category-segmented button {
+  flex: 1 0 23%;
+}
