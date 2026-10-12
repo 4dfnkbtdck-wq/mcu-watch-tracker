@@ -126,77 +126,73 @@
     return block;
   }
 
+  // One pilot / TV movie / spin-off inside an expanded show.
+  function buildExtra(item, extra, xIdx) {
+    const key = extraKey(item, xIdx);
+    const extraItem = document.createElement("div");
+    extraItem.className = "season-block extra-item";
+
+    const noteEl = extra.note ? document.createElement("div") : null;
+    if (noteEl) {
+      noteEl.className = "extra-note";
+      noteEl.textContent = extra.note;
+    }
+
+    if (extra.seasons) {
+      const stats = seasonStats(extra.seasons, key, seen);
+      const titleEl = document.createElement("div");
+      titleEl.className = "extra-title spinoff-title";
+      titleEl.textContent = extra.title + " (" + extra.year + ")";
+      extraItem.appendChild(titleEl);
+
+      const prog = document.createElement("div");
+      prog.className = "extra-note";
+      prog.textContent = stats.seen + " of " + stats.total + " episodes seen";
+      extraItem.appendChild(prog);
+      if (noteEl) extraItem.appendChild(noteEl);
+      extra.seasons.forEach((count, sIdx) => {
+        const label = extra.seasons.length > 1 ? "Season " + (sIdx + 1) : "Episodes";
+        extraItem.appendChild(buildSeasonBlock(label, count, key, sIdx));
+      });
+    } else {
+      const isExtraSeen = !!seen[key];
+      const row = document.createElement("div");
+      row.className = "extra-row";
+      row.setAttribute("role", "checkbox");
+      row.setAttribute("aria-checked", String(isExtraSeen));
+
+      const titleEl = document.createElement("span");
+      titleEl.className = "extra-title" + (isExtraSeen ? " seen" : "");
+      titleEl.textContent = extra.title + " (" + extra.year + ")";
+      row.appendChild(titleEl);
+      row.appendChild(makeCheck("title-check", { seen: isExtraSeen, partial: false }));
+      row.addEventListener("click", () => toggleKey(key));
+      extraItem.appendChild(row);
+      if (noteEl) extraItem.appendChild(noteEl);
+    }
+    return extraItem;
+  }
+
+  // Seasons in order, with each extra slotted in after the season its
+  // "after" field names (before season 1 for -1, at the end if unset).
   function buildPanel(item) {
     const panel = document.createElement("li");
     panel.className = "seasons-panel";
+    const seasons = item.seasons || [];
+    const extras = item.extras || [];
 
-    if (item.seasons) {
-      item.seasons.forEach((count, sIdx) => {
-        panel.appendChild(buildSeasonBlock("Season " + (sIdx + 1), count, item.id, sIdx));
+    const addExtrasAfter = (pos) => {
+      extras.forEach((extra, xIdx) => {
+        const after = extra.after == null ? seasons.length - 1 : extra.after;
+        if (after === pos) panel.appendChild(buildExtra(item, extra, xIdx));
       });
-    }
+    };
 
-    if (item.extras && item.extras.length) {
-      const extrasBlock = document.createElement("div");
-      extrasBlock.className = "season-block";
-
-      const heading = document.createElement("div");
-      heading.className = "season-header-title extras-heading";
-      heading.textContent = "Pilots, Movies & Spin-offs";
-      extrasBlock.appendChild(heading);
-
-      item.extras.forEach((extra, xIdx) => {
-        const key = extraKey(item, xIdx);
-        const extraItem = document.createElement("div");
-        extraItem.className = "extra-item";
-
-        if (extra.seasons) {
-          const stats = seasonStats(extra.seasons, key, seen);
-          const titleEl = document.createElement("div");
-          titleEl.className = "extra-title spinoff-title";
-          titleEl.textContent = extra.title + " (" + extra.year + ")";
-          extraItem.appendChild(titleEl);
-
-          const prog = document.createElement("div");
-          prog.className = "extra-note";
-          prog.textContent = stats.seen + " of " + stats.total + " episodes seen";
-          extraItem.appendChild(prog);
-          if (extra.note) {
-            const noteEl = document.createElement("div");
-            noteEl.className = "extra-note";
-            noteEl.textContent = extra.note;
-            extraItem.appendChild(noteEl);
-          }
-          extra.seasons.forEach((count, sIdx) => {
-            const label = extra.seasons.length > 1 ? "Season " + (sIdx + 1) : "Episodes";
-            extraItem.appendChild(buildSeasonBlock(label, count, key, sIdx));
-          });
-        } else {
-          const isExtraSeen = !!seen[key];
-          const row = document.createElement("div");
-          row.className = "extra-row";
-          row.setAttribute("role", "checkbox");
-          row.setAttribute("aria-checked", String(isExtraSeen));
-
-          const titleEl = document.createElement("span");
-          titleEl.className = "extra-title" + (isExtraSeen ? " seen" : "");
-          titleEl.textContent = extra.title + " (" + extra.year + ")";
-          row.appendChild(titleEl);
-          row.appendChild(makeCheck("title-check", { seen: isExtraSeen, partial: false }));
-          row.addEventListener("click", () => toggleKey(key));
-          extraItem.appendChild(row);
-
-          if (extra.note) {
-            const noteEl = document.createElement("div");
-            noteEl.className = "extra-note";
-            noteEl.textContent = extra.note;
-            extraItem.appendChild(noteEl);
-          }
-        }
-        extrasBlock.appendChild(extraItem);
-      });
-      panel.appendChild(extrasBlock);
-    }
+    addExtrasAfter(-1);
+    seasons.forEach((count, sIdx) => {
+      panel.appendChild(buildSeasonBlock("Season " + (sIdx + 1), count, item.id, sIdx));
+      addExtrasAfter(sIdx);
+    });
 
     return panel;
   }

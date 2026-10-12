@@ -112,6 +112,7 @@ EXTRA_SEGMENTS = [
     ("1989-05-07", {"id": "incredible-hulk-tv", "x": 3}),
     ("1990-02-18", {"id": "incredible-hulk-tv", "x": 4}),
     ("1994-06-01", {"id": "fantastic-four-1994"}),
+    ("2026-05-12", {"id": "punisher-one-last-kill"}),
 ]
 
 # Corrections to spreadsheet dates: film id -> date, or exact

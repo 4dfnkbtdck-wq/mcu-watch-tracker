@@ -848,6 +848,7 @@ const MASTER_LIST = [
   {"id":"daredevil-born-again","s":1,"e":6,"d":"2026-04-21"},
   {"id":"daredevil-born-again","s":1,"e":7,"d":"2026-04-28"},
   {"id":"daredevil-born-again","s":1,"e":8,"d":"2026-05-05"},
+  {"id":"punisher-one-last-kill","d":"2026-05-12"},
   {"id":"brand-new-day","d":"2026-07-31"},
   {"id":"visionquest","d":"2026-12-01"},
   {"id":"avengers-doomsday","d":"2026-12-18"},

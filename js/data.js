@@ -27,7 +27,9 @@
 //   seasons  episode counts, one entry per season — makes the row
 //            expandable into a season/episode checklist
 //   extras   tie-in pilots, TV movies and web spin-offs, checked off
-//            separately: { title, year, seasons?, note? }
+//            separately: { title, year, seasons?, after?, note? } —
+//            "after" is the 0-based season it's listed after when the
+//            show is expanded (-1 = before season 1; default: the end)
 //   group    studio / network / franchise label shown under the title
 //   kind     "Short", "Special", "Digital Series" or "Animated"
 //   upcoming display string for unreleased titles; they're shown but
@@ -68,7 +70,7 @@ const CATEGORIES = [
     name: "TV Specials",
     short: "TV Special",
     mcu: true,
-    note: "Marvel Studios Special Presentations.",
+    note: "Marvel Studios and Marvel Television Special Presentations.",
   },
   {
     id: "digital",
@@ -170,18 +172,19 @@ const TITLES = [
   { id: "deadpool-korg-react", cat: "short", kind: "Short", title: "Deadpool and Korg React", year: 2021, date: "2021-07-13", phase: 4, t: 38.5, note: "Promo short for Free Guy." },
   { id: "werewolf-by-night", cat: "special", kind: "Special", title: "Werewolf by Night", year: 2022, date: "2022-10-07", phase: 4, t: 47 },
   { id: "guardians-holiday-special", cat: "special", kind: "Special", title: "The Guardians of the Galaxy Holiday Special", year: 2022, date: "2022-11-25", phase: 4, t: 48 },
+  { id: "punisher-one-last-kill", cat: "special", kind: "Special", title: "The Punisher: One Last Kill", year: 2026, date: "2026-05-12", phase: 6, t: 59.5, note: "Marvel Television Special Presentation, following Daredevil: Born Again season 2." },
 
   // ---------- Marvel Television ----------
   {
     id: "amazing-spider-man-tv", cat: "ncutv", title: "The Amazing Spider-Man", year: 1977, group: "CBS · 1977–1979", seasons: [5, 7],
-    extras: [{ title: "Spider-Man (pilot movie)", year: 1977 }],
+    extras: [{ title: "Spider-Man (pilot movie)", year: 1977, after: -1 }],
   },
   {
     id: "incredible-hulk-tv", cat: "ncutv", title: "The Incredible Hulk", year: 1978, group: "CBS · 1978–1982", seasons: [10, 22, 23, 18, 7],
     note: "Episode counts follow the usual split; some guides fold the two pilot movies into season 1.",
     extras: [
-      { title: "The Incredible Hulk (pilot movie)", year: 1977 },
-      { title: "The Return of the Incredible Hulk (pilot movie)", year: 1977 },
+      { title: "The Incredible Hulk (pilot movie)", year: 1977, after: -1 },
+      { title: "The Return of the Incredible Hulk (pilot movie)", year: 1977, after: -1 },
       { title: "The Incredible Hulk Returns", year: 1988, note: "Reunion TV movie, with Thor." },
       { title: "The Trial of the Incredible Hulk", year: 1989, note: "Reunion TV movie, with Daredevil." },
       { title: "The Death of the Incredible Hulk", year: 1990, note: "Reunion TV movie." },
@@ -192,7 +195,7 @@ const TITLES = [
   { id: "blade-tv", cat: "ncutv", title: "Blade: The Series", year: 2006, group: "Spike · 2006", seasons: [13] },
   {
     id: "agents-of-shield", cat: "tvseries", title: "Agents of S.H.I.E.L.D.", year: 2013, group: "ABC · 2013–2020", seasons: [22, 22, 22, 22, 22, 13, 13],
-    extras: [{ title: "Agents of S.H.I.E.L.D.: Slingshot", year: 2016, seasons: [6], note: "Six-part web series following Yo-Yo." }],
+    extras: [{ title: "Agents of S.H.I.E.L.D.: Slingshot", year: 2016, seasons: [6], after: 3, note: "Six-part web series following Yo-Yo, released Dec 13, 2016, during season 4's winter break (between episodes 8 and 9)." }],
   },
   { id: "agent-carter-tv", cat: "tvseries", title: "Agent Carter", year: 2015, group: "ABC · 2015–2016", seasons: [8, 10] },
   { id: "daredevil", cat: "tvseries", title: "Daredevil", year: 2015, group: "Netflix · 2015–2018", seasons: [13, 13, 13] },
