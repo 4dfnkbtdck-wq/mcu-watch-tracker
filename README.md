@@ -41,37 +41,40 @@ worker caches the app so it keeps working with no signal.
 
 ## Using it
 
-1. Switch between **Films / Series / Specials / Marvel TV / Legacy**
-   with the segmented control at the top.
-2. Tap the circle on a row to check it off. Tap a series to expand it
-   into seasons and episodes: tap an episode number to check it off, or
-   a season header to check off (or clear) the whole season. The circle
-   shows a dash while you're partway through a show.
-3. Some classic shows also list their pilot movies, reunion TV movies,
-   and web spin-offs inside the expanded panel, checked off separately.
-4. **Release Order / Timeline Order** (on the MCU tabs) flips between
-   release order and in-universe story order. On the other tabs it's
-   **Oldest First / Newest First**.
-5. **Search** matches titles, years, phases ("phase 3"), and studios or
-   networks ("netflix", "fox x-men").
-6. **Mark All Seen / Clear All** apply to the current tab (after a
-   confirmation).
-7. **Watch Order** (top-right link) puts everything in one list, with
-   an **Up Next** card showing the first thing you haven't watched (down
-   to the episode). It has three views:
-   - **Everything**: the spreadsheet's order. Every film, short, and
-     episode, MCU or not, in release order, with shows' episodes
-     interleaved with the films by air date (e.g. Agents of
-     S.H.I.E.L.D. season 1 episodes 1–6, then Thor: The Dark World,
-     then episodes 7–16...). Checking off a row marks that run of
-     episodes.
-   - **MCU Release** / **MCU Timeline**: just the Marvel Studios
-     titles, one row per film or series, in release or story order.
-     Tapping a series opens it on the main page, expanded.
+The app has three tabs along the bottom.
 
-   Checkmarks are shared with the main page, so an episode checked off
-   in one place is checked off in the other. **Hide Watched** trims the
-   list down to what's left.
+**Master List** (the home screen) works like the spreadsheet: every
+film, short, and TV episode, MCU or not, one row each, in release
+order, numbered, with its release date, grouped under year headings.
+
+- Tap a row to check it off. Tap a row's **number** to mark everything
+  up to that point as watched (handy when you're starting out).
+- **Everything / MCU / Non-MCU** filters the list.
+- The **Up Next** card shows the first thing you haven't watched; tap
+  it to jump there.
+- **Hide Watched** trims the list down to what's left, and **Search**
+  finds a title.
+
+**By Title** lists each film and show once, split into **Films /
+Series / Specials / Marvel TV / Legacy** tabs.
+
+- Tap a series to expand it into seasons and episodes. Tap an episode
+  number to check it off, or a season header to check off (or clear)
+  the whole season.
+- Some classic shows also list their pilot movies, reunion TV movies,
+  and web spin-offs inside the expanded panel.
+- **Release Order / Timeline Order** (on the MCU tabs) flips between
+  release and story order; elsewhere it's **Oldest / Newest First**.
+- **Search** matches titles, years, phases ("phase 3"), and studios or
+  networks ("netflix", "fox x-men").
+- **Mark All Seen / Clear All** apply to the current tab.
+
+**MCU Order** is just the Marvel Studios titles, one row per film or
+series, in **release** or **timeline** order, with its own Up Next
+card. Tapping a series opens it on By Title, expanded.
+
+All three tabs share the same checkmarks: an episode checked off in
+one place is checked off everywhere.
 
 Upcoming titles (Avengers: Doomsday, VisionQuest, Avengers: Secret
 Wars) are listed with their release window but can't be checked off
@@ -87,7 +90,7 @@ top explaining each field. Add a title by adding an object; fix an
 episode count by editing its `seasons` array. Never change an existing
 title's `id`, because that's what its checkmarks are saved under.
 
-The Everything order in `js/watchorder.js` is generated from the
+The Master List in `js/watchorder.js` is generated from the
 spreadsheet. After editing the spreadsheet (or adding a title to
 `data.js`), regenerate it:
 
@@ -98,9 +101,10 @@ python3 tools/build_watchorder.py path/to/MCU_Watch_Order.xlsx
 
 The script matches every spreadsheet row to a title in `data.js` and
 refuses to write anything if a row doesn't match or a title is missing
-from the order, listing what needs fixing (usually a new entry in its
-`FILM_IDS` / `SHOW_IDS` maps).
+from the list, listing what needs fixing (usually a new entry in its
+`FILM_IDS` / `SHOW_IDS` maps). Film release dates come from `data.js`
+where it has them; spreadsheet typos are corrected in its `DATE_FIXES`.
 
-After any change to CSS or JS, bump the `?v=` numbers in both HTML pages
+After any change to CSS or JS, bump the `?v=` numbers in all three HTML pages
 and the matching entries and `CACHE_VERSION` in `sw.js`, or phones with
 the app installed may keep the old version.

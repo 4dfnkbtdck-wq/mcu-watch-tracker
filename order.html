@@ -3,32 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Watch Order — MCU Watch Tracker</title>
-  <meta name="description" content="Everything Marvel in release order, or the MCU in release or timeline order, with what to watch next." />
+  <title>MCU Order — MCU Watch Tracker</title>
+  <meta name="description" content="The MCU in release or timeline order, with what to watch next." />
   <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23e23636'/%3E%3Cpath d='M38 28 L74 50 L38 72 Z' fill='white'/%3E%3C/svg%3E" />
-  <link rel="apple-touch-icon" href="img/icon-180.png?v=1" />
+  <link rel="apple-touch-icon" href="img/icon-180.png?v=2" />
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MCU" />
-  <link rel="stylesheet" href="css/styles.css?v=1" />
+  <link rel="stylesheet" href="css/styles.css?v=2" />
 </head>
 <body>
   <div class="navbar">
     <div class="navbar-inner">
       <span class="navbar-badge"><svg viewBox="0 0 100 100" width="12" height="12" xmlns="http://www.w3.org/2000/svg"><path d="M30 18 L84 50 L30 82 Z" fill="white"/></svg></span>
       <span class="navbar-title">MCU Watch Tracker</span>
-      <a class="navbar-link" href="index.html">All Titles</a>
     </div>
   </div>
 
   <main class="screen">
     <div class="large-title-block">
-      <h1 class="large-title">Watch<br />Order</h1>
-      <p class="large-subtitle">Everything Marvel, start to finish</p>
+      <h1 class="large-title">MCU<br />Order</h1>
+      <p class="large-subtitle">The Marvel Studios saga, start to finish</p>
     </div>
 
     <div class="segmented" id="order-segmented"></div>
@@ -50,17 +49,24 @@
       <ul class="ios-list" id="order-list"></ul>
     </section>
 
-    <p class="page-footer">Episode-by-episode tracking for any show is on the All Titles page. Fan-made tracker. Not affiliated with Marvel or Disney.</p>
+    <p class="page-footer">Tap a series to track it episode by episode. Fan-made tracker. Not affiliated with Marvel or Disney.</p>
   </main>
+
+  <nav class="tabbar">
+    <div class="tabbar-inner">
+      <a class="tab" href="index.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Master List</span></a>
+      <a class="tab" href="titles.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg><span>By Title</span></a>
+      <a class="tab active" aria-current="page" href="order.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 4.5v15l12-7.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>MCU Order</span></a>
+    </div>
+  </nav>
 
   <!-- Bump every ?v= below (including the stylesheet in <head>, the
        matching tags in the other page, and APP_SHELL in sw.js) on any
        deploy that touches css/js — GitHub Pages and mobile browsers can
        otherwise keep serving stale cached files after a redeploy. -->
-  <script src="js/data.js?v=1"></script>
-  <script src="js/watchorder.js?v=1"></script>
-  <script src="js/shared.js?v=1"></script>
-  <script src="js/order.js?v=1"></script>
+  <script src="js/data.js?v=2"></script>
+  <script src="js/shared.js?v=2"></script>
+  <script src="js/order.js?v=2"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>By Title — MCU Watch Tracker</title>
+  <meta name="description" content="Track every Marvel film and series you've watched — the whole MCU, plus every live-action Marvel TV show and Fox and Sony film." />
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23e23636'/%3E%3Cpath d='M38 28 L74 50 L38 72 Z' fill='white'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="img/icon-180.png?v=2" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MCU" />
+  <link rel="stylesheet" href="css/styles.css?v=2" />
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <span class="navbar-badge"><svg viewBox="0 0 100 100" width="12" height="12" xmlns="http://www.w3.org/2000/svg"><path d="M30 18 L84 50 L30 82 Z" fill="white"/></svg></span>
+      <span class="navbar-title">MCU Watch Tracker</span>
+    </div>
+  </div>
+
+  <main class="screen">
+    <div class="large-title-block">
+      <h1 class="large-title">By<br />Title</h1>
+      <p class="large-subtitle">Every film and show, one row each</p>
+    </div>
+
+    <div class="segmented" id="category-segmented"></div>
+
+    <div class="progress-row">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <span class="progress-label" id="progress-label">0 of 0 seen</span>
+    </div>
+
+    <div class="search-wrap">
+      <input type="search" id="search" class="search-input" placeholder="Search titles, years, phases, studios" autocomplete="off" />
+    </div>
+
+    <div class="toolbar-row">
+      <button type="button" id="sort-toggle" class="toolbar-btn">Release Order</button>
+      <button type="button" id="mark-all-seen" class="toolbar-btn">Mark All Seen</button>
+      <button type="button" id="clear-all-seen" class="toolbar-btn">Clear All</button>
+    </div>
+
+    <p class="category-note hidden" id="category-note"></p>
+
+    <section class="ios-group">
+      <ul class="ios-list" id="titles-list"></ul>
+    </section>
+
+    <p class="page-footer">Fan-made tracker. Not affiliated with Marvel or Disney. Your checkmarks are saved in this browser only.</p>
+  </main>
+
+  <nav class="tabbar">
+    <div class="tabbar-inner">
+      <a class="tab" href="index.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Master List</span></a>
+      <a class="tab active" aria-current="page" href="titles.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" stroke="currentColor" stroke-width="2"/></svg><span>By Title</span></a>
+      <a class="tab" href="order.html"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 4.5v15l12-7.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>MCU Order</span></a>
+    </div>
+  </nav>
+
+  <!-- Bump every ?v= below (including the stylesheet in <head>, the
+       matching tags in the other page, and APP_SHELL in sw.js) on any
+       deploy that touches css/js — GitHub Pages and mobile browsers can
+       otherwise keep serving stale cached files after a redeploy. -->
+  <script src="js/data.js?v=2"></script>
+  <script src="js/shared.js?v=2"></script>
+  <script src="js/app.js?v=2"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").then((reg) => reg.update());
+      });
+      // A new service worker (skipWaiting + clients.claim, both already
+      // in sw.js) takes over silently — reload once so an already-open
+      // tab/installed app picks up the update instead of running stale JS.
+      let reloadedForNewSw = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (reloadedForNewSw) return;
+        reloadedForNewSw = true;
+        window.location.reload();
+      });
+    }
+  </script>
+</body>
+</html>

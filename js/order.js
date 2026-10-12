@@ -13,7 +13,6 @@
   const orderNote = document.getElementById("order-note");
 
   const ORDERS = [
-    { id: "everything", label: "Everything", note: "Every film, show, short and episode, in the order it came out, with episodes interleaved by air date (MCU or not), following your MCU Watch Order spreadsheet. Check off a row to mark that whole run of episodes." },
     { id: "release", label: "MCU Release", note: "Just the Marvel Studios films, Disney+ series, specials and shorts, in the order they were released. Tap a series to track it episode by episode." },
     { id: "timeline", label: "MCU Timeline", note: "The MCU in story order, following Disney+'s timeline. Series sit where their first season takes place; alternate-universe titles sit near the end." },
   ];
@@ -24,15 +23,11 @@
   let seen = loadJson(STORAGE_SEEN, {});
   let order = ORDERS.some((o) => o.id === localStorage.getItem(STORAGE_ORDER))
     ? localStorage.getItem(STORAGE_ORDER)
-    : "everything";
+    : "release";
   let hideSeen = localStorage.getItem(STORAGE_HIDE_SEEN) === "1";
 
   function save() {
     localStorage.setItem(STORAGE_SEEN, JSON.stringify(seen));
-  }
-
-  function episodeRange(a, b) {
-    return a === b ? "Episode " + a : "Episodes " + a + "–" + b;
   }
 
   // Every row on the page is an "entry": what to show, plus the
@@ -50,35 +45,7 @@
     return { domId: item.id, item, title: item.title, year: item.year, detail: "", keys, opensShow: !!item.seasons };
   }
 
-  function segmentEntry(seg, idx) {
-    const item = titlesById[seg.id];
-    const extra = seg.x != null ? item.extras[seg.x] : null;
-    const prefix = extra ? extraKey(item, seg.x) : item.id;
-    const entry = { domId: "seg" + idx, item, title: extra ? extra.title : item.title, keys: [], detail: "" };
-    entry.year = seg.y || (extra ? extra.year : item.year);
-    if (extra) entry.type = extra.seasons ? "Spin-off" : "TV Movie";
-
-    if (seg.s == null) {
-      entry.keys.push({ key: prefix });
-      if (extra) entry.detail = "From " + item.title;
-      return entry;
-    }
-
-    const seasons = extra ? extra.seasons : item.seasons;
-    const a = seg.a || 1;
-    const b = seg.b || seasons[seg.s];
-    for (let e = a; e <= b; e++) entry.keys.push({ key: episodeKey(prefix, seg.s, e), s: seg.s, e });
-
-    const parts = [];
-    if (seasons.length > 1) parts.push("Season " + (seg.s + 1));
-    if (a !== 1 || b !== seasons[seg.s] || seasons.length === 1) parts.push(episodeRange(a, b));
-    else parts.push("All " + seasons[seg.s] + " episodes");
-    entry.detail = parts.join(" · ");
-    return entry;
-  }
-
   function buildEntries() {
-    if (order === "everything") return WATCH_ORDER.map(segmentEntry);
     const items = TITLES.filter(isMcu);
     items.sort(order === "timeline" ? compareTimeline : compareRelease);
     return items.map(wholeTitleEntry);
@@ -251,7 +218,7 @@
         // Whole series (MCU orders) open on the main page for
         // episode-by-episode tracking; every other row is one tap.
         row.addEventListener("click", () => {
-          if (entry.opensShow) location.href = "index.html?open=" + encodeURIComponent(item.id);
+          if (entry.opensShow) location.href = "titles.html?open=" + encodeURIComponent(item.id);
           else check.click();
         });
       }

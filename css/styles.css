@@ -106,7 +106,7 @@ body {
 .screen {
   max-width: 560px;
   margin: 0 auto;
-  padding: 1rem 1rem calc(3rem + env(safe-area-inset-bottom));
+  padding: 1rem 1rem calc(6rem + env(safe-area-inset-bottom));
 }
 
 .large-title-block {
@@ -631,4 +631,59 @@ body {
 .type-tag.type-spin-off {
   background: var(--note-bg);
   color: var(--note-text);
+}
+
+/* ---------- Tab bar ---------- */
+
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background: var(--navbar-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid var(--separator);
+}
+
+.tabbar-inner {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  padding: 0.35rem 0.5rem calc(0.35rem + env(safe-area-inset-bottom));
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  color: var(--label-tertiary);
+  text-decoration: none;
+  font-size: 0.66rem;
+  font-weight: 600;
+}
+
+.tab.active {
+  color: var(--accent);
+}
+
+/* ---------- Master List ---------- */
+
+.year-header {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 1.2rem 0.25rem 0.45rem;
+}
+
+.master-detail {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--label-secondary);
+}
+
+.master-row .order-num {
+  cursor: pointer;
 }

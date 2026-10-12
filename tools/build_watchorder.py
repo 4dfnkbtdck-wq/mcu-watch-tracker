@@ -1,16 +1,23 @@
-"""Regenerate js/watchorder.js from the MCU_Watch_Order.xlsx spreadsheet.
+"""Regenerate js/watchorder.js (the Master List) from MCU_Watch_Order.xlsx.
 
     python3 tools/build_watchorder.py path/to/MCU_Watch_Order.xlsx
 
 The spreadsheet lists everything in release order, one row per film and
 one row per episode (or one row per season, for shows released all at
-once). This turns those rows into the "Everything" order on the Watch
-Order page: runs of consecutive episodes from the same season collapse
-into one segment, and every row is matched to a title id in js/data.js.
+once). This turns it into the Master List: one row per film, short and
+episode, each matched to a title id in js/data.js and carrying its
+release date. Whole-season rows are expanded to one row per episode
+(all on the season's release date).
 
 Titles in data.js that the spreadsheet doesn't have (the 1944 serial,
-the 1970s CBS shows and TV movies, etc.) are merged in by date from
-EXTRA_SEGMENTS below, and unreleased titles go on the end.
+the 1970s CBS shows and TV movies, etc.) are merged in from
+EXTRA_SEGMENTS below — those old shows stay one row per season, since
+per-episode air dates aren't tracked for them. Unreleased titles go on
+the end.
+
+The final list is sorted by date (keeping the spreadsheet's order for
+ties). Film dates come from data.js where it has one (the US release
+date), then DATE_FIXES, then the spreadsheet.
 
 Needs openpyxl and node (to read js/data.js).
 """
@@ -107,6 +114,16 @@ EXTRA_SEGMENTS = [
     ("1994-06-01", {"id": "fantastic-four-1994"}),
 ]
 
+# Corrections to spreadsheet dates: film id -> date, or exact
+# spreadsheet title -> date for an episode row.
+DATE_FIXES = {
+    "venom-last-dance": "2024-10-25",
+    # Typed as 2925 in the spreadsheet.
+    "Your Friendly Neighbourhood Spider-Man (Season 1) Ep. 6": "2025-02-12",
+    "Your Friendly Neighbourhood Spider-Man (Season 1) Ep. 7": "2025-02-12",
+    "Your Friendly Neighbourhood Spider-Man (Season 1) Ep. 8": "2025-02-12",
+}
+
 # Released after the spreadsheet's last row, or not out yet.
 TAIL_SEGMENTS = [
     {"id": "brand-new-day"},
@@ -137,16 +154,17 @@ def main(xlsx_path):
         by_title_year.setdefault((t["title"], t["year"]), []).append(t["id"])
 
     ws = openpyxl.load_workbook(xlsx_path, data_only=True).active
-    segments = []  # (date, segment)
+    rows = []  # (date, row)
     problems = []
 
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        if not row or not row[0]:
+    for sheet_row in ws.iter_rows(min_row=2, values_only=True):
+        if not sheet_row or not sheet_row[0]:
             continue
-        name = norm(row[0])
-        date = row[1]
+        name = norm(sheet_row[0])
+        date = sheet_row[1]
         date_s = date.strftime("%Y-%m-%d") if isinstance(date, datetime.datetime) else str(date)[:10]
-        total = row[2]
+        date_s = DATE_FIXES.get(name, date_s)
+        total = sheet_row[2]
 
         ep = re.match(r"^(.*?)\s*Ep\.\s*(\d+)$", name)
         base = ep.group(1) if ep else name
@@ -163,28 +181,20 @@ def main(xlsx_path):
             if s_idx >= len(seasons):
                 problems.append("no season %d for %s" % (s_idx + 1, tid))
                 continue
-            a = b = int(ep.group(2)) if ep else None
-            if not ep:
-                a, b = 1, seasons[s_idx]
-                if total and int(total) != b:
-                    problems.append("%s: spreadsheet says %s episodes, data.js %s" % (name, total, b))
-            prev = segments[-1][1] if segments else None
-            if (
-                prev
-                and prev.get("id") == tid
-                and prev.get("s") == s_idx
-                and "x" not in prev
-                and prev.get("b") == a - 1
-            ):
-                prev["b"] = b
+            if ep:
+                episodes = [int(ep.group(2))]
             else:
-                segments.append((date_s, {"id": tid, "s": s_idx, "a": a, "b": b}))
+                if total and int(total) != seasons[s_idx]:
+                    problems.append("%s: spreadsheet says %s episodes, data.js %s" % (name, total, seasons[s_idx]))
+                episodes = range(1, seasons[s_idx] + 1)
+            for e in episodes:
+                rows.append((date_s, {"id": tid, "s": s_idx, "e": e}))
             continue
 
         if name in EXTRA_SHOWS:
             tid, x = EXTRA_SHOWS[name]
-            count = titles[tid]["extras"][x]["seasons"][0]
-            segments.append((date_s, {"id": tid, "x": x, "s": 0, "a": 1, "b": count}))
+            for e in range(1, titles[tid]["extras"][x]["seasons"][0] + 1):
+                rows.append((date_s, {"id": tid, "x": x, "s": 0, "e": e}))
             continue
 
         year = int(date_s[:4])
@@ -197,21 +207,26 @@ def main(xlsx_path):
                 problems.append("can't match film: %s (%d) -> %s" % (name, year, ids))
                 continue
             tid = ids[0]
-        segments.append((date_s, {"id": tid}))
+        date_s = titles[tid].get("date") or DATE_FIXES.get(tid, date_s)
+        rows.append((date_s, {"id": tid}))
 
-    # Merge in the extra segments by date, ahead of the first later row.
-    for date_s, seg in sorted(EXTRA_SEGMENTS, key=lambda e: e[0], reverse=True):
-        idx = next((i for i, (d, _) in enumerate(segments) if d > date_s), len(segments))
-        segments.insert(idx, (date_s, seg))
-    for date_s, seg in segments:
-        seg["y"] = int(date_s[:4])
-    order = [seg for _, seg in segments] + TAIL_SEGMENTS
+    rows += EXTRA_SEGMENTS
+    rows += [(titles[seg["id"]]["date"], seg) for seg in TAIL_SEGMENTS]
+    rows.sort(key=lambda r: r[0])  # stable: ties keep spreadsheet order
+    for date_s, row in rows:
+        row["d"] = date_s
 
-    # Every title should appear somewhere in the order.
-    used = {seg["id"] for seg in order}
+    # Every title should appear somewhere, and every episode exactly once.
+    seen_rows = set()
+    for _, row in rows:
+        key = json.dumps(row, sort_keys=True).replace(row["d"], "")
+        if key in seen_rows:
+            problems.append("duplicate row: " + key)
+        seen_rows.add(key)
+    used = {row["id"] for _, row in rows}
     for tid in titles:
         if tid not in used:
-            problems.append("title not in watch order: " + tid)
+            problems.append("title not in master list: " + tid)
 
     if problems:
         print("\n".join(problems), file=sys.stderr)
@@ -219,27 +234,26 @@ def main(xlsx_path):
 
     lines = [
         "// GENERATED by tools/build_watchorder.py from MCU_Watch_Order.xlsx —",
-        "// edit the spreadsheet (or that script's EXTRA_SEGMENTS) and rerun it",
-        "// rather than editing this file by hand.",
+        "// edit the spreadsheet (or that script's EXTRA_SEGMENTS / DATE_FIXES)",
+        "// and rerun it rather than editing this file by hand.",
         "//",
-        "// The \"Everything\" watch order: every film, short and episode in",
-        "// release order, interleaved by air date. Each segment is",
-        "//   { id }                  a single-watch title",
-        "//   { id, x }               a single-watch extra of title id",
-        "//   { id, s, a?, b? }       season s (0-based) of title id, episodes",
-        "//                           a..b (the whole season when omitted)",
-        "//   { id, x, s, a, b }      the same, for an extra with seasons",
-        "// plus y, the year that segment came out (titles' own year when absent).",
+        "// The Master List: every film, short and episode in release order.",
+        "// Each row is",
+        "//   { id, d }            a single-watch title, released on date d",
+        "//   { id, x, d }         a single-watch extra of title id",
+        "//   { id, s, e, d }      episode e of season s (0-based) of title id",
+        "//   { id, x, s, e, d }   the same, for an extra with seasons",
+        "//   { id, s, d }         a whole season (older shows only)",
         "",
-        "const WATCH_ORDER = [",
+        "const MASTER_LIST = [",
     ]
-    for seg in order:
-        lines.append("  " + json.dumps(seg, separators=(", ", ": ")) + ",")
+    for _, row in rows:
+        lines.append("  " + json.dumps(row, separators=(",", ":")) + ",")
     lines.append("];")
     lines.append("")
     with open(os.path.join(ROOT, "js", "watchorder.js"), "w") as f:
         f.write("\n".join(lines))
-    print("wrote %d segments" % len(order))
+    print("wrote %d rows" % len(rows))
 
 
 if __name__ == "__main__":
