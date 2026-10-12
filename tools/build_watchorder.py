@@ -9,11 +9,8 @@ episode, each matched to a title id in js/data.js and carrying its
 release date. Whole-season rows are expanded to one row per episode
 (all on the season's release date).
 
-Titles in data.js that the spreadsheet doesn't have (the 1944 serial,
-the 1970s CBS shows and TV movies, etc.) are merged in from
-EXTRA_SEGMENTS below — those old shows stay one row per season, since
-per-episode air dates aren't tracked for them. Unreleased titles go on
-the end.
+Titles in data.js that the spreadsheet doesn't have are merged in from
+EXTRA_SEGMENTS below (by date), and unreleased titles go on the end.
 
 The final list is sorted by date (keeping the spreadsheet's order for
 ties). Film dates come from data.js where it has one (the US release
@@ -93,25 +90,6 @@ EXTRA_SHOWS = {"Agents of S.H.I.E.L.D.: Slingshot": ("agents-of-shield", 0)}
 
 # (date, segment) for data.js titles the spreadsheet doesn't list.
 EXTRA_SEGMENTS = [
-    ("1944-03-05", {"id": "captain-america-1944"}),
-    ("1977-09-14", {"id": "amazing-spider-man-tv", "x": 0}),
-    ("1977-11-04", {"id": "incredible-hulk-tv", "x": 0}),
-    ("1977-11-27", {"id": "incredible-hulk-tv", "x": 1}),
-    ("1978-03-10", {"id": "incredible-hulk-tv", "s": 0}),
-    ("1978-04-05", {"id": "amazing-spider-man-tv", "s": 0}),
-    ("1978-05-17", {"id": "spider-man-toei", "s": 0}),
-    ("1978-09-05", {"id": "amazing-spider-man-tv", "s": 1}),
-    ("1978-09-06", {"id": "dr-strange-1978"}),
-    ("1978-09-22", {"id": "incredible-hulk-tv", "s": 1}),
-    ("1979-01-19", {"id": "captain-america-1979"}),
-    ("1979-09-21", {"id": "incredible-hulk-tv", "s": 2}),
-    ("1979-11-23", {"id": "captain-america-ii-1979"}),
-    ("1980-11-07", {"id": "incredible-hulk-tv", "s": 3}),
-    ("1981-10-02", {"id": "incredible-hulk-tv", "s": 4}),
-    ("1988-05-22", {"id": "incredible-hulk-tv", "x": 2}),
-    ("1989-05-07", {"id": "incredible-hulk-tv", "x": 3}),
-    ("1990-02-18", {"id": "incredible-hulk-tv", "x": 4}),
-    ("1994-06-01", {"id": "fantastic-four-1994"}),
     ("2026-05-12", {"id": "punisher-one-last-kill"}),
 ]
 

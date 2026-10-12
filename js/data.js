@@ -2,10 +2,10 @@
 //
 // Everything Marvel in live action: the Marvel Studios films, Disney+
 // series and specials (the MCU proper), the Marvel Television shows
-// (ABC, Netflix, Hulu, Freeform, FX, Fox and the older CBS/syndicated
-// series), and every non-MCU live-action film (Fox's X-Men and
-// Fantastic Four, Sony's Spider-Man and Spider-Man Universe, the
-// pre-2008 one-offs, and the TV movies). The animated Marvel Studios
+// (ABC, Netflix, Hulu, Freeform, FX, Fox and syndicated), and every
+// non-MCU live-action film (Fox's X-Men and Fantastic Four, Sony's
+// Spider-Man and Spider-Man Universe, the pre-2008 one-offs, and the TV
+// movies), from Howard the Duck (1986) on. The animated Marvel Studios
 // series are included (they're in the MCU); non-MCU animation isn't.
 //
 // Cross-checked against the user's own MCU_Watch_Order.xlsx, which is
@@ -83,13 +83,13 @@ const CATEGORIES = [
     id: "ncufilm",
     name: "NCU Films",
     short: "NCU Film",
-    note: "Non-MCU live-action Marvel films: the early one-offs, Fox's X-Men and Fantastic Four, Sony's Spider-Man and Spider-Man Universe films, and made-for-TV movies.",
+    note: "Non-MCU live-action Marvel films: the early one-offs, Fox's X-Men and Fantastic Four, Sony's Spider-Man and Spider-Man Universe films, and the Fox TV movies.",
   },
   {
     id: "ncutv",
     name: "NCU TV Series",
     short: "NCU TV Series",
-    note: "Live-action Marvel shows made outside Marvel Studios: Marvel Television's ABC, Netflix, Hulu and Freeform shows (Daredevil: Born Again on the TV Series tab continues the Netflix Daredevil story), Fox and FX's X-Men shows, Mutant X, Blade, and the classic CBS and Japanese series.",
+    note: "Live-action Marvel shows made outside Marvel Studios: Marvel Television's ABC, Netflix, Hulu and Freeform shows (Daredevil: Born Again on the TV Series tab continues the Netflix Daredevil story), Fox and FX's X-Men shows, Mutant X, and Blade.",
   },
 ];
 
@@ -175,22 +175,6 @@ const TITLES = [
   { id: "punisher-one-last-kill", cat: "special", kind: "Special", title: "The Punisher: One Last Kill", year: 2026, date: "2026-05-12", phase: 6, t: 59.5, note: "Marvel Television Special Presentation, following Daredevil: Born Again season 2." },
 
   // ---------- Marvel Television ----------
-  {
-    id: "amazing-spider-man-tv", cat: "ncutv", title: "The Amazing Spider-Man", year: 1977, group: "CBS · 1977–1979", seasons: [5, 7],
-    extras: [{ title: "Spider-Man (pilot movie)", year: 1977, after: -1 }],
-  },
-  {
-    id: "incredible-hulk-tv", cat: "ncutv", title: "The Incredible Hulk", year: 1978, group: "CBS · 1978–1982", seasons: [10, 22, 23, 18, 7],
-    note: "Episode counts follow the usual split; some guides fold the two pilot movies into season 1.",
-    extras: [
-      { title: "The Incredible Hulk (pilot movie)", year: 1977, after: -1 },
-      { title: "The Return of the Incredible Hulk (pilot movie)", year: 1977, after: -1 },
-      { title: "The Incredible Hulk Returns", year: 1988, note: "Reunion TV movie, with Thor." },
-      { title: "The Trial of the Incredible Hulk", year: 1989, note: "Reunion TV movie, with Daredevil." },
-      { title: "The Death of the Incredible Hulk", year: 1990, note: "Reunion TV movie." },
-    ],
-  },
-  { id: "spider-man-toei", cat: "ncutv", title: "Spider-Man (Japanese series)", year: 1978, group: "Toei · 1978–1979", seasons: [41] },
   { id: "mutant-x", cat: "ncutv", title: "Mutant X", year: 2001, group: "Syndicated · 2001–2004", seasons: [22, 22, 22] },
   { id: "blade-tv", cat: "ncutv", title: "Blade: The Series", year: 2006, group: "Spike · 2006", seasons: [13] },
   {
@@ -212,14 +196,9 @@ const TITLES = [
   { id: "helstrom", cat: "ncutv", title: "Helstrom", year: 2020, group: "Hulu · 2020", seasons: [10] },
 
   // ---------- Other Marvel Films ----------
-  { id: "captain-america-1944", cat: "ncufilm", title: "Captain America (serial)", year: 1944, group: "Republic Pictures", note: "15-chapter theatrical serial — the first live-action Marvel adaptation." },
-  { id: "dr-strange-1978", cat: "ncufilm", title: "Dr. Strange", year: 1978, group: "CBS TV movie" },
-  { id: "captain-america-1979", cat: "ncufilm", title: "Captain America", year: 1979, group: "CBS TV movie" },
-  { id: "captain-america-ii-1979", cat: "ncufilm", title: "Captain America II: Death Too Soon", year: 1979, group: "CBS TV movie" },
   { id: "howard-the-duck", cat: "ncufilm", title: "Howard the Duck", year: 1986, group: "Universal" },
   { id: "punisher-1989", cat: "ncufilm", title: "The Punisher", year: 1989, group: "New World", note: "Dolph Lundgren version." },
   { id: "captain-america-1990", cat: "ncufilm", title: "Captain America", year: 1990, group: "21st Century Film" },
-  { id: "fantastic-four-1994", cat: "ncufilm", title: "The Fantastic Four", year: 1994, group: "Roger Corman", note: "Never officially released — circulates as a bootleg." },
   { id: "generation-x", cat: "ncufilm", title: "Generation X", year: 1996, group: "Fox TV movie" },
   { id: "nick-fury-1998", cat: "ncufilm", title: "Nick Fury: Agent of S.H.I.E.L.D.", year: 1998, group: "Fox TV movie", note: "David Hasselhoff as Fury." },
   { id: "blade", cat: "ncufilm", title: "Blade", year: 1998, group: "New Line" },

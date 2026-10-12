@@ -3,15 +3,15 @@
 A small, dependency-free web app for tracking everything Marvel: every
 **MCU film**, **Disney+ series** (animated ones included), and
 **special, short, or web series**, plus the live-action **Marvel
-Television** shows (ABC, Netflix, Hulu, Freeform, FX, Fox, and the
-classic CBS series) and the **non-MCU films** (Fox's X-Men and
-Fantastic Four, Sony's Spider-Man and Spider-Man Universe, the early
-one-offs, and the TV movies).
+Television** shows (ABC, Netflix, Hulu, Freeform, FX, Fox) and the
+**non-MCU films** (Fox's X-Men and Fantastic Four, Sony's Spider-Man
+and Spider-Man Universe, and the earlier one-offs), from Howard the
+Duck (1986) on.
 
-The list and the "Everything" watch order come from the
-`MCU_Watch_Order.xlsx` spreadsheet, plus a few older titles it doesn't
-cover (the 1944 Captain America serial, the 1970s CBS shows and TV
-movies, and the unreleased 1994 Fantastic Four).
+The list and the Master List order come from the
+`MCU_Watch_Order.xlsx` spreadsheet, plus the titles released since it
+was last updated (Spider-Man: Brand New Day, The Punisher: One Last
+Kill) and the announced upcoming ones.
 
 ## Running it
 
