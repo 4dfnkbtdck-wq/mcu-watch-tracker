@@ -5,8 +5,12 @@
 // (ABC, Netflix, Hulu, Freeform, FX, Fox and the older CBS/syndicated
 // series), and every non-MCU live-action film (Fox's X-Men and
 // Fantastic Four, Sony's Spider-Man and Spider-Man Universe, the
-// pre-2008 one-offs, and the TV movies). Animated titles (What If...?,
-// X-Men '97, etc.) are deliberately left out.
+// pre-2008 one-offs, and the TV movies). The animated Marvel Studios
+// series are included (they're in the MCU); non-MCU animation isn't.
+//
+// Cross-checked against the user's own MCU_Watch_Order.xlsx, which is
+// also what js/watchorder.js (the "Everything" watch order) is
+// generated from.
 //
 // Each title:
 //   id       unique, stable — it's the localStorage key, so never
@@ -17,14 +21,15 @@
 //   date     US release date (MCU titles only) — orders the combined
 //            Watch Order list across films, series and specials
 //   t        MCU in-universe timeline position (MCU titles only).
-//            Series are placed by their first season.
+//            Series are placed by their first season. Decimals slot a
+//            title between two others without renumbering.
 //   phase    MCU phase (MCU titles only)
 //   seasons  episode counts, one entry per season — makes the row
 //            expandable into a season/episode checklist
 //   extras   tie-in pilots, TV movies and web spin-offs, checked off
 //            separately: { title, year, seasons?, note? }
 //   group    studio / network / franchise label shown under the title
-//   kind     "Short" or "Special" for one-shots and specials
+//   kind     "Short", "Special", "Digital Series" or "Animated"
 //   upcoming display string for unreleased titles; they're shown but
 //            can't be checked off and don't count toward progress
 //   note     extra context shown under the row
@@ -46,14 +51,14 @@ const CATEGORIES = [
     name: "MCU Series",
     short: "Series",
     mcu: true,
-    note: "Marvel Studios' live-action Disney+ series. Tap a show to check off individual episodes.",
+    note: "Marvel Studios' Disney+ series, including the animated ones (What If...?, I Am Groot, and friends). Tap a show to check off individual episodes.",
   },
   {
     id: "specials",
     name: "MCU Specials & Shorts",
     short: "Specials",
     mcu: true,
-    note: "Marvel Studios Special Presentations, the Marvel One-Shots (found on the Phase 1–2 Blu-rays and Disney+), and the Team Thor mockumentary shorts.",
+    note: "Marvel Studios Special Presentations, the Marvel One-Shots and other shorts, and the in-universe web series (WHIH Newsfront, The Daily Bugle).",
   },
   {
     id: "marveltv",
@@ -113,18 +118,23 @@ const TITLES = [
   { id: "avengers-secret-wars", cat: "films", title: "Avengers: Secret Wars", year: 2027, date: "2027-12-17", phase: 6, t: 64, upcoming: "In theaters Dec 17, 2027" },
 
   // ---------- MCU Series (Disney+) ----------
+  { id: "eyes-of-wakanda", cat: "series", kind: "Animated", title: "Eyes of Wakanda", year: 2025, date: "2025-08-01", phase: 6, t: 0.5, seasons: [4], note: "Spans centuries of Wakandan history, so it opens the timeline." },
   { id: "wandavision", cat: "series", title: "WandaVision", year: 2021, date: "2021-01-15", phase: 4, t: 33, seasons: [9] },
   { id: "falcon-winter-soldier", cat: "series", title: "The Falcon and the Winter Soldier", year: 2021, date: "2021-03-19", phase: 4, t: 35, seasons: [6] },
   { id: "loki", cat: "series", title: "Loki", year: 2021, date: "2021-06-09", phase: 4, t: 32, seasons: [6, 6] },
+  { id: "what-if", cat: "series", kind: "Animated", title: "What If...?", year: 2021, date: "2021-08-11", phase: 4, t: 32.5, seasons: [9, 9, 8] },
   { id: "hawkeye", cat: "series", title: "Hawkeye", year: 2021, date: "2021-11-24", phase: 4, t: 40, seasons: [6] },
   { id: "moon-knight", cat: "series", title: "Moon Knight", year: 2022, date: "2022-03-30", phase: 4, t: 41, seasons: [6] },
   { id: "ms-marvel", cat: "series", title: "Ms. Marvel", year: 2022, date: "2022-06-08", phase: 4, t: 45, seasons: [6] },
+  { id: "i-am-groot", cat: "series", kind: "Animated", title: "I Am Groot", year: 2022, date: "2022-08-10", phase: 4, t: 16.5, seasons: [5, 5] },
   { id: "she-hulk", cat: "series", title: "She-Hulk: Attorney at Law", year: 2022, date: "2022-08-18", phase: 4, t: 44, seasons: [9] },
   { id: "secret-invasion", cat: "series", title: "Secret Invasion", year: 2023, date: "2023-06-21", phase: 5, t: 51, seasons: [6] },
   { id: "echo", cat: "series", title: "Echo", year: 2024, date: "2024-01-09", phase: 5, t: 43, seasons: [5] },
   { id: "agatha", cat: "series", title: "Agatha All Along", year: 2024, date: "2024-09-18", phase: 5, t: 54, seasons: [9] },
+  { id: "friendly-neighborhood-spider-man", cat: "series", kind: "Animated", title: "Your Friendly Neighborhood Spider-Man", year: 2025, date: "2025-01-29", phase: 5, t: 61.5, seasons: [10], note: "Set in its own universe." },
   { id: "daredevil-born-again", cat: "series", title: "Daredevil: Born Again", year: 2025, date: "2025-03-04", phase: 5, t: 56, seasons: [9, 8] },
   { id: "ironheart", cat: "series", title: "Ironheart", year: 2025, date: "2025-06-24", phase: 5, t: 58, seasons: [6] },
+  { id: "marvel-zombies", cat: "series", kind: "Animated", title: "Marvel Zombies", year: 2025, date: "2025-09-24", phase: 6, t: 32.6, seasons: [4], note: "Spins out of What If...? season 1, episode 5." },
   { id: "wonder-man", cat: "series", title: "Wonder Man", year: 2026, date: "2026-01-27", phase: 6, t: 59, seasons: [8] },
   { id: "visionquest", cat: "series", title: "VisionQuest", year: 2026, date: "2026-12-01", phase: 6, t: 62, upcoming: "Coming to Disney+ late 2026" },
 
@@ -134,9 +144,13 @@ const TITLES = [
   { id: "one-shot-item-47", cat: "specials", kind: "Short", title: "Item 47", year: 2012, date: "2012-09-25", phase: 1, t: 11, note: "Marvel One-Shot." },
   { id: "one-shot-agent-carter", cat: "specials", kind: "Short", title: "Agent Carter", year: 2013, date: "2013-09-24", phase: 2, t: 2, note: "Marvel One-Shot — the pilot for the Agent Carter series on the Marvel TV tab." },
   { id: "one-shot-all-hail-the-king", cat: "specials", kind: "Short", title: "All Hail the King", year: 2014, date: "2014-02-04", phase: 2, t: 14, note: "Marvel One-Shot." },
+  { id: "whih-newsfront", cat: "specials", kind: "Digital Series", title: "WHIH Newsfront", year: 2015, date: "2015-07-02", phase: 2, t: 19.5, seasons: [5, 5], note: "In-universe news web series tied to Ant-Man and Civil War." },
   { id: "team-thor", cat: "specials", kind: "Short", title: "Team Thor", year: 2016, date: "2016-09-13", phase: 3, t: 25 },
   { id: "team-thor-2", cat: "specials", kind: "Short", title: "Team Thor: Part 2", year: 2017, date: "2017-02-28", phase: 3, t: 26 },
   { id: "team-darryl", cat: "specials", kind: "Short", title: "Team Darryl", year: 2018, date: "2018-03-06", phase: 3, t: 28 },
+  { id: "peters-to-do-list", cat: "specials", kind: "Short", title: "Peter's To-Do List", year: 2019, date: "2019-10-01", phase: 3, t: 36.4, note: "Spider-Man: Far From Home home-release short." },
+  { id: "daily-bugle", cat: "specials", kind: "Digital Series", title: "The Daily Bugle", year: 2019, date: "2019-10-23", phase: 3, t: 36.5, seasons: [6, 19, 4], note: "J. Jonah Jameson's in-universe web show." },
+  { id: "deadpool-korg-react", cat: "specials", kind: "Short", title: "Deadpool and Korg React", year: 2021, date: "2021-07-13", phase: 4, t: 38.5, note: "Promo short for Free Guy." },
   { id: "werewolf-by-night", cat: "specials", kind: "Special", title: "Werewolf by Night", year: 2022, date: "2022-10-07", phase: 4, t: 47 },
   { id: "guardians-holiday-special", cat: "specials", kind: "Special", title: "The Guardians of the Galaxy Holiday Special", year: 2022, date: "2022-11-25", phase: 4, t: 48 },
 
@@ -158,7 +172,7 @@ const TITLES = [
   },
   { id: "spider-man-toei", cat: "marveltv", title: "Spider-Man (Japanese series)", year: 1978, group: "Toei · 1978–1979", seasons: [41] },
   { id: "mutant-x", cat: "marveltv", title: "Mutant X", year: 2001, group: "Syndicated · 2001–2004", seasons: [22, 22, 22] },
-  { id: "blade-tv", cat: "marveltv", title: "Blade: The Series", year: 2006, group: "Spike · 2006", seasons: [12] },
+  { id: "blade-tv", cat: "marveltv", title: "Blade: The Series", year: 2006, group: "Spike · 2006", seasons: [13] },
   {
     id: "agents-of-shield", cat: "marveltv", title: "Agents of S.H.I.E.L.D.", year: 2013, group: "ABC · 2013–2020", seasons: [22, 22, 22, 22, 22, 13, 13],
     extras: [{ title: "Agents of S.H.I.E.L.D.: Slingshot", year: 2016, seasons: [6], note: "Six-part web series following Yo-Yo." }],
@@ -216,6 +230,7 @@ const TITLES = [
   { id: "fant4stic", cat: "legacy", title: "Fantastic Four", year: 2015, group: "Fox Fantastic Four", note: "The Josh Trank reboot." },
   { id: "deadpool", cat: "legacy", title: "Deadpool", year: 2016, group: "Fox X-Men" },
   { id: "apocalypse", cat: "legacy", title: "X-Men: Apocalypse", year: 2016, group: "Fox X-Men" },
+  { id: "no-good-deed", cat: "legacy", kind: "Short", title: "No Good Deed", year: 2017, group: "Fox X-Men", note: "Deadpool short released alongside Logan." },
   { id: "logan", cat: "legacy", title: "Logan", year: 2017, group: "Fox X-Men" },
   { id: "deadpool-2", cat: "legacy", title: "Deadpool 2", year: 2018, group: "Fox X-Men" },
   { id: "venom", cat: "legacy", title: "Venom", year: 2018, group: "Sony's Spider-Man Universe" },

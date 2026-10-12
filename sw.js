@@ -11,6 +11,7 @@ const APP_SHELL = [
   "manifest.webmanifest",
   "css/styles.css?v=1",
   "js/data.js?v=1",
+  "js/watchorder.js?v=1",
   "js/shared.js?v=1",
   "js/app.js?v=1",
   "js/order.js?v=1",

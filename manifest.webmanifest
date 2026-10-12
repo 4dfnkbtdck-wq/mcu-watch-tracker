@@ -1,7 +1,7 @@
 {
   "name": "MCU Watch Tracker",
   "short_name": "MCU",
-  "description": "Track every Marvel live-action film and series you've watched — the MCU, Marvel TV, and the Fox and Sony films.",
+  "description": "Track every Marvel film and series you've watched — the whole MCU, plus every live-action Marvel TV show and Fox and Sony film.",
   "start_url": "index.html",
   "scope": ".",
   "display": "standalone",

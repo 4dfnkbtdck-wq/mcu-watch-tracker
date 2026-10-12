@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Watch Order — MCU Watch Tracker</title>
-  <meta name="description" content="The whole MCU in release or timeline order, with what to watch next." />
+  <meta name="description" content="Everything Marvel in release order, or the MCU in release or timeline order, with what to watch next." />
   <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23e23636'/%3E%3Cpath d='M38 28 L74 50 L38 72 Z' fill='white'/%3E%3C/svg%3E" />
@@ -28,7 +28,7 @@
   <main class="screen">
     <div class="large-title-block">
       <h1 class="large-title">Watch<br />Order</h1>
-      <p class="large-subtitle">The MCU, start to finish</p>
+      <p class="large-subtitle">Everything Marvel, start to finish</p>
     </div>
 
     <div class="segmented" id="order-segmented"></div>
@@ -50,7 +50,7 @@
       <ul class="ios-list" id="order-list"></ul>
     </section>
 
-    <p class="page-footer">Tap a series to track it episode by episode. Fan-made tracker. Not affiliated with Marvel or Disney.</p>
+    <p class="page-footer">Episode-by-episode tracking for any show is on the All Titles page. Fan-made tracker. Not affiliated with Marvel or Disney.</p>
   </main>
 
   <!-- Bump every ?v= below (including the stylesheet in <head>, the
@@ -58,6 +58,7 @@
        deploy that touches css/js — GitHub Pages and mobile browsers can
        otherwise keep serving stale cached files after a redeploy. -->
   <script src="js/data.js?v=1"></script>
+  <script src="js/watchorder.js?v=1"></script>
   <script src="js/shared.js?v=1"></script>
   <script src="js/order.js?v=1"></script>
   <script>

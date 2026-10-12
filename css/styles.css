@@ -606,7 +606,7 @@ body {
 }
 
 .order-num {
-  width: 1.8rem;
+  width: 2.2rem;
   text-align: right;
   font-weight: 600;
 }
@@ -625,7 +625,10 @@ body {
   vertical-align: 1px;
 }
 
-.type-tag.type-series {
+.type-tag.type-series,
+.type-tag.type-animated,
+.type-tag.type-digital-series,
+.type-tag.type-spin-off {
   background: var(--note-bg);
   color: var(--note-text);
 }

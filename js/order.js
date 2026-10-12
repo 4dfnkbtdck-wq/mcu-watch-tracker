@@ -13,22 +13,95 @@
   const orderNote = document.getElementById("order-note");
 
   const ORDERS = [
-    { id: "release", label: "Release", note: "Everything Marvel Studios has put out — films, Disney+ series, specials and shorts — in the order it was released." },
-    { id: "timeline", label: "Timeline", note: "The MCU in story order, following Disney+'s timeline. Series sit where their first season takes place; The Fantastic Four: First Steps (a separate universe) sits just before the next Avengers." },
+    { id: "everything", label: "Everything", note: "Every film, show, short and episode, in the order it came out, with episodes interleaved by air date (MCU or not), following your MCU Watch Order spreadsheet. Check off a row to mark that whole run of episodes." },
+    { id: "release", label: "MCU Release", note: "Just the Marvel Studios films, Disney+ series, specials and shorts, in the order they were released. Tap a series to track it episode by episode." },
+    { id: "timeline", label: "MCU Timeline", note: "The MCU in story order, following Disney+'s timeline. Series sit where their first season takes place; alternate-universe titles sit near the end." },
   ];
 
+  const titlesById = {};
+  TITLES.forEach((t) => (titlesById[t.id] = t));
+
   let seen = loadJson(STORAGE_SEEN, {});
-  let order = localStorage.getItem(STORAGE_ORDER) === "timeline" ? "timeline" : "release";
+  let order = ORDERS.some((o) => o.id === localStorage.getItem(STORAGE_ORDER))
+    ? localStorage.getItem(STORAGE_ORDER)
+    : "everything";
   let hideSeen = localStorage.getItem(STORAGE_HIDE_SEEN) === "1";
 
   function save() {
     localStorage.setItem(STORAGE_SEEN, JSON.stringify(seen));
   }
 
-  function mcuTitles() {
+  function episodeRange(a, b) {
+    return a === b ? "Episode " + a : "Episodes " + a + "–" + b;
+  }
+
+  // Every row on the page is an "entry": what to show, plus the
+  // storage keys it covers ({ key, s, e } — s/e only for episodes).
+  // A row counts as watched once all of its keys are seen.
+  function wholeTitleEntry(item) {
+    const keys = [];
+    if (item.seasons) {
+      item.seasons.forEach((count, sIdx) => {
+        for (let e = 1; e <= count; e++) keys.push({ key: episodeKey(item.id, sIdx, e), s: sIdx, e });
+      });
+    } else {
+      keys.push({ key: item.id });
+    }
+    return { domId: item.id, item, title: item.title, year: item.year, detail: "", keys, opensShow: !!item.seasons };
+  }
+
+  function segmentEntry(seg, idx) {
+    const item = titlesById[seg.id];
+    const extra = seg.x != null ? item.extras[seg.x] : null;
+    const prefix = extra ? extraKey(item, seg.x) : item.id;
+    const entry = { domId: "seg" + idx, item, title: extra ? extra.title : item.title, keys: [], detail: "" };
+    entry.year = seg.y || (extra ? extra.year : item.year);
+    if (extra) entry.type = extra.seasons ? "Spin-off" : "TV Movie";
+
+    if (seg.s == null) {
+      entry.keys.push({ key: prefix });
+      if (extra) entry.detail = "From " + item.title;
+      return entry;
+    }
+
+    const seasons = extra ? extra.seasons : item.seasons;
+    const a = seg.a || 1;
+    const b = seg.b || seasons[seg.s];
+    for (let e = a; e <= b; e++) entry.keys.push({ key: episodeKey(prefix, seg.s, e), s: seg.s, e });
+
+    const parts = [];
+    if (seasons.length > 1) parts.push("Season " + (seg.s + 1));
+    if (a !== 1 || b !== seasons[seg.s] || seasons.length === 1) parts.push(episodeRange(a, b));
+    else parts.push("All " + seasons[seg.s] + " episodes");
+    entry.detail = parts.join(" · ");
+    return entry;
+  }
+
+  function buildEntries() {
+    if (order === "everything") return WATCH_ORDER.map(segmentEntry);
     const items = TITLES.filter(isMcu);
     items.sort(order === "timeline" ? compareTimeline : compareRelease);
-    return items;
+    return items.map(wholeTitleEntry);
+  }
+
+  function entryState(entry) {
+    const seenCount = entry.keys.filter((k) => seen[k.key]).length;
+    const all = seenCount === entry.keys.length;
+    return { seen: all, partial: seenCount > 0 && !all, seenCount };
+  }
+
+  function setEntrySeen(entry, value) {
+    entry.keys.forEach((k) => {
+      if (value) seen[k.key] = true;
+      else delete seen[k.key];
+    });
+  }
+
+  // "S2 E5" for the first unseen episode in an entry, or "".
+  function nextEpisodeLabel(entry) {
+    const next = entry.keys.find((k) => !seen[k.key]);
+    if (!next || next.e == null) return "";
+    return "S" + (next.s + 1) + " E" + next.e;
   }
 
   function buildSegmented() {
@@ -36,7 +109,7 @@
     ORDERS.forEach((o) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.textContent = o.label + " Order";
+      btn.textContent = o.label;
       if (o.id === order) btn.classList.add("active");
       btn.addEventListener("click", () => {
         order = o.id;
@@ -47,24 +120,14 @@
     });
   }
 
-  function detailFor(item) {
-    if (!item.seasons) return "";
-    const next = findNextEpisode(item.seasons, item.id, seen);
-    if (!next) return "";
-    return item.seasons.length > 1 || next.episode > 1
-      ? "Next: S" + next.season + " E" + next.episode
-      : "Start with episode 1";
-  }
-
-  function renderUpNext(items) {
-    const next = items.find((t) => !t.upcoming && !titleState(t, seen).seen);
+  function renderUpNext(entries) {
+    const next = entries.find((en) => !en.item.upcoming && !entryState(en).seen);
     upNextEl.innerHTML = "";
     upNextEl.onclick = null;
+
     const label = document.createElement("div");
     label.className = "up-next-label";
     label.textContent = "Up Next";
-    upNextEl.appendChild(label);
-
     const title = document.createElement("div");
     title.className = "up-next-title";
     const sub = document.createElement("div");
@@ -72,19 +135,22 @@
 
     if (!next) {
       title.textContent = "You're all caught up!";
-      const coming = items.find((t) => t.upcoming);
-      sub.textContent = coming ? "Next up: " + coming.title + " — " + coming.upcoming : "";
+      const coming = entries.find((en) => en.item.upcoming);
+      sub.textContent = coming ? "Next up: " + coming.title + " — " + coming.item.upcoming : "";
     } else {
       title.textContent = next.title;
-      const parts = [typeLabel(next), next.year];
-      const detail = detailFor(next);
-      if (detail) parts.push(detail);
+      const parts = [next.type || typeLabel(next.item)];
+      const nextEp = nextEpisodeLabel(next);
+      if (nextEp) parts.push(nextEp);
+      else if (next.detail) parts.push(next.detail);
+      parts.push(next.year);
       sub.textContent = parts.join(" · ");
       upNextEl.onclick = () => {
-        const el = document.getElementById("order-" + next.id);
+        const el = document.getElementById("order-" + next.domId);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       };
     }
+    upNextEl.appendChild(label);
     upNextEl.appendChild(title);
     upNextEl.appendChild(sub);
   }
@@ -94,19 +160,20 @@
     orderNote.textContent = ORDERS.find((o) => o.id === order).note;
     hideSeenBtn.textContent = hideSeen ? "Show Watched" : "Hide Watched";
 
-    const items = mcuTitles();
-    renderUpNext(items);
+    const entries = buildEntries();
+    renderUpNext(entries);
 
     orderList.innerHTML = "";
     let shown = 0;
-    items.forEach((item, idx) => {
-      const state = titleState(item, seen);
+    entries.forEach((entry, idx) => {
+      const item = entry.item;
+      const state = entryState(entry);
       if (hideSeen && state.seen) return;
       shown++;
 
       const row = document.createElement("li");
       row.className = "title-row" + (item.upcoming ? " upcoming" : "");
-      row.id = "order-" + item.id;
+      row.id = "order-" + entry.domId;
 
       const num = document.createElement("span");
       num.className = "title-year order-num";
@@ -116,16 +183,29 @@
       info.className = "title-info";
       const nameEl = document.createElement("div");
       nameEl.className = "title-name" + (state.seen ? " seen" : "");
-      nameEl.textContent = item.title;
+      nameEl.textContent = entry.title;
       info.appendChild(nameEl);
+
+      if (entry.detail) {
+        const detailEl = document.createElement("div");
+        detailEl.className = "title-progress";
+        detailEl.textContent = entry.detail;
+        info.appendChild(detailEl);
+      }
 
       const meta = document.createElement("div");
       meta.className = "title-meta";
       const tag = document.createElement("span");
-      tag.className = "type-tag type-" + typeLabel(item).toLowerCase();
-      tag.textContent = typeLabel(item);
+      const type = entry.type || typeLabel(item);
+      tag.className = "type-tag type-" + type.toLowerCase().replace(/\s+/g, "-");
+      tag.textContent = type;
       meta.appendChild(tag);
-      meta.appendChild(document.createTextNode(item.year + " · Phase " + item.phase));
+      meta.appendChild(
+        // group is e.g. "CBS · 1978–1982" — just the network/studio here.
+        document.createTextNode(
+          entry.year + (item.phase ? " · Phase " + item.phase : item.group ? " · " + item.group.split(" · ")[0] : "")
+        )
+      );
       info.appendChild(meta);
 
       if (item.upcoming) {
@@ -133,12 +213,12 @@
         upEl.className = "title-upcoming";
         upEl.textContent = item.upcoming;
         info.appendChild(upEl);
-      } else if (state.stats) {
+      } else if (entry.keys.length > 1) {
         const prog = document.createElement("div");
         prog.className = "title-progress";
-        const detail = detailFor(item);
+        const nextEp = state.partial ? nextEpisodeLabel(entry) : "";
         prog.textContent =
-          state.stats.seen + " of " + state.stats.total + " episodes seen" + (detail && state.partial ? " · " + detail : "");
+          state.seenCount + " of " + entry.keys.length + " episodes seen" + (nextEp ? " · Next: " + nextEp : "");
         info.appendChild(prog);
       }
 
@@ -151,7 +231,7 @@
         soon.textContent = "Soon";
         row.appendChild(soon);
       } else {
-        if (item.seasons) {
+        if (entry.opensShow) {
           const chevron = document.createElement("span");
           chevron.className = "title-chevron";
           chevron.innerHTML = chevronSvg();
@@ -162,16 +242,16 @@
         check.innerHTML = checkIconSvg();
         check.addEventListener("click", (ev) => {
           ev.stopPropagation();
-          setTitleSeen(item, seen, !state.seen);
+          setEntrySeen(entry, !state.seen);
           save();
           render();
         });
         row.appendChild(check);
 
-        // Series open on the main page for episode-by-episode
-        // tracking; everything else is a single watch.
+        // Whole series (MCU orders) open on the main page for
+        // episode-by-episode tracking; every other row is one tap.
         row.addEventListener("click", () => {
-          if (item.seasons) location.href = "index.html?open=" + encodeURIComponent(item.id);
+          if (entry.opensShow) location.href = "index.html?open=" + encodeURIComponent(item.id);
           else check.click();
         });
       }
@@ -186,8 +266,8 @@
       orderList.appendChild(li);
     }
 
-    const released = items.filter((t) => !t.upcoming);
-    const seenCount = released.filter((t) => titleState(t, seen).seen).length;
+    const released = entries.filter((en) => !en.item.upcoming);
+    const seenCount = released.filter((en) => entryState(en).seen).length;
     const pct = released.length ? Math.round((seenCount / released.length) * 100) : 0;
     progressFill.style.width = pct + "%";
     progressLabel.textContent = seenCount + " of " + released.length + " seen";
