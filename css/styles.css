@@ -1,0 +1,631 @@
+:root {
+  --bg: #f2f2f7;
+  --grouped-bg: #ffffff;
+  --separator: rgba(60, 60, 67, 0.29);
+  --label: #000000;
+  --label-secondary: #6c6c70;
+  --label-tertiary: #8e8e93;
+  --accent: #e23636;
+  --accent-strong: #c41e1e;
+  --green: #34c759;
+  --red: #ff3b30;
+  --navbar-bg: rgba(242, 242, 247, 0.85);
+  --track-bg: #e9e9eb;
+  --note-bg: #fdeeee;
+  --note-border: #eb9a9a;
+  --note-text: #7a1b1b;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --grouped-bg: #1c1c1e;
+    --separator: rgba(84, 84, 88, 0.65);
+    --label: #ffffff;
+    --label-secondary: #98989f;
+    --label-tertiary: #6c6c70;
+    --accent: #f04a4a;
+    --accent-strong: #ff6b6b;
+    --navbar-bg: rgba(0, 0, 0, 0.78);
+    --track-bg: #39393d;
+    --note-bg: #2a0e0e;
+    --note-border: #8f2b2b;
+    --note-text: #f2b3b3;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--label);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--navbar-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid transparent;
+}
+
+.navbar-inner {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: calc(0.6rem + env(safe-area-inset-top)) 1rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.navbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.navbar-link {
+  margin-left: auto;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* ---------- Layout ---------- */
+
+.screen {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 1rem 1rem calc(3rem + env(safe-area-inset-bottom));
+}
+
+.large-title-block {
+  padding: 0.5rem 0.25rem 1.1rem;
+}
+
+.large-title {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.05;
+  margin: 0 0 0.3rem;
+}
+
+.large-subtitle {
+  margin: 0;
+  color: var(--label-secondary);
+  font-size: 0.95rem;
+}
+
+/* ---------- Segmented control ---------- */
+
+.segmented {
+  display: flex;
+  background: var(--track-bg);
+  border-radius: 9px;
+  padding: 2px;
+  gap: 2px;
+  margin: 0 0 0.9rem;
+}
+
+.segmented button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--label);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.45rem 0.2rem;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.segmented button.active {
+  background: var(--grouped-bg);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------- Progress ---------- */
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0 0.1rem 0.9rem;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--track-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.2s ease;
+}
+
+.progress-label {
+  font-size: 0.82rem;
+  color: var(--label-secondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Search ---------- */
+
+.search-wrap {
+  margin: 0 0 0.7rem;
+}
+
+.search-input {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: var(--grouped-bg);
+  padding: 0.55rem 0.8rem;
+  font-size: 0.95rem;
+  color: var(--label);
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: var(--label-tertiary);
+}
+
+/* ---------- Toolbar ---------- */
+
+.toolbar-row {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0 0 0.9rem;
+}
+
+.toolbar-btn {
+  flex: 1;
+  border: none;
+  background: var(--grouped-bg);
+  color: var(--accent-strong);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.5rem 0.3rem;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.toolbar-btn:active {
+  opacity: 0.7;
+}
+
+/* ---------- Grouped list ---------- */
+
+.ios-group {
+  margin: 0 0 1rem;
+}
+
+.ios-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--grouped-bg);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--separator);
+  cursor: pointer;
+  user-select: none;
+}
+
+.title-row:last-child {
+  border-bottom: none;
+}
+
+.title-row:active {
+  background: rgba(120, 120, 128, 0.12);
+}
+
+.title-year {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  color: var(--label-secondary);
+  width: 2.6rem;
+  flex-shrink: 0;
+}
+
+.title-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.title-name {
+  font-size: 0.98rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.title-name.seen {
+  color: var(--label-secondary);
+}
+
+.title-meta {
+  font-size: 0.8rem;
+  color: var(--label-tertiary);
+}
+
+.title-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--track-bg);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-check.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.title-check svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+}
+
+.title-check.checked svg {
+  opacity: 1;
+}
+
+.title-check.partial {
+  background: transparent;
+  border-color: var(--accent);
+}
+
+.title-check.partial svg {
+  display: none;
+}
+
+.title-check.partial::after {
+  content: "";
+  width: 10px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+
+.title-chevron {
+  width: 18px;
+  flex-shrink: 0;
+  color: var(--label-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.title-row.expanded .title-chevron {
+  transform: rotate(90deg);
+}
+
+.title-progress {
+  font-size: 0.78rem;
+  color: var(--label-tertiary);
+  margin-top: 0.05rem;
+}
+
+/* ---------- Season / episode drill-down ---------- */
+
+.seasons-panel {
+  padding: 0.2rem 0.85rem 0.9rem;
+  border-bottom: 1px solid var(--separator);
+  background: rgba(120, 120, 128, 0.06);
+}
+
+.seasons-panel:last-child {
+  border-bottom: none;
+}
+
+.season-block {
+  margin-top: 0.7rem;
+}
+
+.season-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  user-select: none;
+}
+
+.season-header-text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.season-header-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.season-header-count {
+  font-size: 0.76rem;
+  color: var(--label-tertiary);
+  white-space: nowrap;
+}
+
+.season-check {
+  width: 22px;
+  height: 22px;
+}
+
+.episode-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+
+.episode-chip {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 0.3rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--track-bg);
+  background: var(--grouped-bg);
+  color: var(--label-secondary);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.episode-chip.seen {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.episode-chip:active {
+  opacity: 0.7;
+}
+
+.extras-heading {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+  color: var(--label-tertiary);
+  margin-bottom: 0.3rem;
+}
+
+.extra-item {
+  border-top: 1px solid var(--separator);
+}
+
+.extra-item:first-of-type {
+  border-top: none;
+}
+
+.extra-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.5rem 0.1rem 0.1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.extra-title {
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+.extra-note {
+  font-size: 0.74rem;
+  color: var(--label-tertiary);
+  line-height: 1.35;
+  padding: 0 0.1rem 0.55rem;
+}
+
+.extra-title.seen {
+  color: var(--label-secondary);
+}
+
+.extra-check {
+  flex-shrink: 0;
+}
+
+.empty-state {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: var(--label-tertiary);
+  font-size: 0.9rem;
+}
+
+/* ---------- Note / footer ---------- */
+
+.category-note {
+  font-size: 0.78rem;
+  color: var(--note-text);
+  background: var(--note-bg);
+  border: 1px solid var(--note-border);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  margin: -0.2rem 0 1rem;
+  line-height: 1.4;
+}
+
+.category-note.hidden {
+  display: none;
+}
+
+.page-footer {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--label-tertiary);
+  margin: 1.2rem 0 0;
+}
+
+/* ---------- MCU additions ---------- */
+
+.segmented button {
+  font-size: 0.78rem;
+}
+
+.title-note {
+  font-size: 0.76rem;
+  color: var(--label-tertiary);
+  line-height: 1.35;
+  margin-top: 0.15rem;
+}
+
+.title-upcoming {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+  margin-top: 0.05rem;
+}
+
+.title-row.upcoming {
+  cursor: default;
+}
+
+.title-row.upcoming .title-name {
+  color: var(--label-secondary);
+}
+
+.title-row.upcoming:active {
+  background: none;
+}
+
+.soon-pill {
+  flex-shrink: 0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--track-bg);
+  color: var(--label-secondary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.extra-item .extra-title.spinoff-title {
+  padding: 0.5rem 0.1rem 0;
+  font-weight: 700;
+}
+
+.extra-item .season-block {
+  margin-left: 0.6rem;
+  padding-left: 0.6rem;
+  border-left: 2px solid var(--track-bg);
+}
+
+/* ---------- Watch Order page ---------- */
+
+.up-next {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.8rem 0.95rem;
+  margin: 0 0 0.9rem;
+  cursor: pointer;
+}
+
+.up-next-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+}
+
+.up-next-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 0.1rem;
+}
+
+.up-next-sub {
+  font-size: 0.82rem;
+  opacity: 0.9;
+  margin-top: 0.1rem;
+}
+
+.order-num {
+  width: 1.8rem;
+  text-align: right;
+  font-weight: 600;
+}
+
+.type-tag {
+  display: inline-block;
+  margin-right: 0.35rem;
+  padding: 0 0.35rem;
+  border-radius: 5px;
+  background: var(--track-bg);
+  color: var(--label-secondary);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  vertical-align: 1px;
+}
+
+.type-tag.type-series {
+  background: var(--note-bg);
+  color: var(--note-text);
+}
