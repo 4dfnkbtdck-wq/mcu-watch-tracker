@@ -1,7 +1,8 @@
 (function () {
   "use strict";
 
-  const STORAGE_CATEGORY = "mcu-tracker:category";
+  const STORAGE_CATEGORY = "mcu-tracker:category"; // pre-multi-select: one id
+  const STORAGE_CATEGORIES = "mcu-tracker:categories";
   const STORAGE_SORT = "mcu-tracker:sort";
   const STORAGE_EXPANDED = "mcu-tracker:expanded";
 
@@ -15,9 +16,14 @@
   const titlesList = document.getElementById("titles-list");
   const categoryNote = document.getElementById("category-note");
 
-  let currentCategoryId = localStorage.getItem(STORAGE_CATEGORY) || CATEGORIES[0].id;
-  // Per-tab sort: MCU tabs flip between release and timeline order,
-  // the others between oldest and newest first.
+  // The categories currently shown — any combination, tapped on and off.
+  let selectedIds = (function () {
+    const ids = loadJson(STORAGE_CATEGORIES, null) || [localStorage.getItem(STORAGE_CATEGORY)];
+    const valid = CATEGORIES.map((c) => c.id).filter((id) => ids.includes(id));
+    return valid.length ? valid : [CATEGORIES[0].id];
+  })();
+  // Sort per selection: all-Marvel-Studios selections flip between
+  // release and timeline order, the rest between oldest and newest first.
   let sortModes = loadJson(STORAGE_SORT, {});
   let searchTerm = "";
   let expanded = new Set(loadJson(STORAGE_EXPANDED, []));
@@ -39,13 +45,29 @@
 
   // Timeline order is only offered on a tab where every title has a
   // timeline position (i.e. Marvel Studios titles only).
-  function sortModesFor(cat) {
-    return titlesIn(cat.id).every((t) => t.t != null) ? ["release", "timeline"] : ["oldest", "newest"];
+  function saveSelection() {
+    localStorage.setItem(STORAGE_CATEGORIES, JSON.stringify(selectedIds));
   }
 
-  function currentSort(cat) {
-    const modes = sortModesFor(cat);
-    return modes.includes(sortModes[cat.id]) ? sortModes[cat.id] : modes[0];
+  // The current selection as one pseudo-category: { id, name, note, items }.
+  function selection() {
+    const cats = CATEGORIES.filter((c) => selectedIds.includes(c.id));
+    return {
+      id: selectedIds.join("+"),
+      name: cats.length === CATEGORIES.length ? "every category" : cats.map((c) => c.name).join(" + "),
+      note: cats.length === 1 ? cats[0].note : "",
+      multi: cats.length > 1,
+      items: TITLES.filter((t) => selectedIds.includes(t.cat)),
+    };
+  }
+
+  function sortModesFor(sel) {
+    return sel.items.every((t) => t.t != null) ? ["release", "timeline"] : ["oldest", "newest"];
+  }
+
+  function currentSort(sel) {
+    const modes = sortModesFor(sel);
+    return modes.includes(sortModes[sel.id]) ? sortModes[sel.id] : modes[0];
   }
 
   const SORT_LABELS = {
@@ -197,21 +219,34 @@
     return panel;
   }
 
+  // Category buttons toggle on and off (at least one stays on); "All"
+  // turns every category on.
   function buildSegmented() {
     categorySegmented.innerHTML = "";
-    CATEGORIES.forEach((cat) => {
+    const addButton = (label, active, onClick, catId) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.textContent = cat.short;
-      if (cat.id === currentCategoryId) btn.classList.add("active");
+      btn.textContent = label;
+      if (catId) btn.className = "cat-" + catId;
+      if (active) btn.classList.add("active");
+      btn.setAttribute("aria-pressed", String(active));
       btn.addEventListener("click", () => {
-        currentCategoryId = cat.id;
-        localStorage.setItem(STORAGE_CATEGORY, currentCategoryId);
-        searchInput.value = "";
-        searchTerm = "";
+        onClick();
+        saveSelection();
         render();
       });
       categorySegmented.appendChild(btn);
+    };
+
+    addButton("All", selectedIds.length === CATEGORIES.length, () => {
+      selectedIds = CATEGORIES.map((c) => c.id);
+    });
+    CATEGORIES.forEach((cat) => {
+      const on = selectedIds.includes(cat.id);
+      addButton(cat.short, on, () => {
+        if (on && selectedIds.length === 1) return;
+        selectedIds = CATEGORIES.map((c) => c.id).filter((id) => (id === cat.id ? !on : selectedIds.includes(id)));
+      }, cat.id);
     });
   }
 
@@ -231,7 +266,7 @@
 
   function render() {
     buildSegmented();
-    const cat = getCategory(currentCategoryId);
+    const cat = selection();
     const sort = currentSort(cat);
     sortToggle.textContent = SORT_LABELS[sort];
 
@@ -242,7 +277,7 @@
       categoryNote.classList.add("hidden");
     }
 
-    let items = titlesIn(cat.id).sort(compareRelease);
+    let items = cat.items.slice().sort(compareRelease);
     if (sort === "timeline") items.sort(compareTimeline);
     else if (sort === "newest") items.reverse();
 
@@ -273,7 +308,11 @@
 
       const row = document.createElement("li");
       row.className =
-        "title-row" + (isExpanded ? " expanded" : "") + (isUpcoming(item) ? " upcoming" : "");
+        "title-row" +
+        (isExpanded ? " expanded" : "") +
+        (isUpcoming(item) ? " upcoming" : "") +
+        // With several categories showing, colour-code rows like the Master List.
+        (cat.multi ? " typed-row cat-" + item.cat : "");
       row.id = "title-" + item.id;
       if (!isUpcoming(item)) {
         row.setAttribute("role", "checkbox");
@@ -292,10 +331,16 @@
       info.appendChild(nameEl);
 
       const meta = metaText(item);
-      if (meta) {
+      if (meta || cat.multi) {
         const metaEl = document.createElement("div");
         metaEl.className = "title-meta";
-        metaEl.textContent = meta;
+        if (cat.multi) {
+          const tag = document.createElement("span");
+          tag.className = "type-tag";
+          tag.textContent = getCategory(item.cat).short;
+          metaEl.appendChild(tag);
+        }
+        metaEl.appendChild(document.createTextNode(meta));
         info.appendChild(metaEl);
       }
 
@@ -363,7 +408,7 @@
   }
 
   function updateProgress(cat) {
-    const released = titlesIn(cat.id).filter((t) => !isUpcoming(t));
+    const released = cat.items.filter((t) => !isUpcoming(t));
     const seenCount = released.filter((t) => titleState(t, seen).seen).length;
     const pct = released.length ? Math.round((seenCount / released.length) * 100) : 0;
     progressFill.style.width = pct + "%";
@@ -376,7 +421,7 @@
   });
 
   sortToggle.addEventListener("click", () => {
-    const cat = getCategory(currentCategoryId);
+    const cat = selection();
     const modes = sortModesFor(cat);
     sortModes[cat.id] = modes[(modes.indexOf(currentSort(cat)) + 1) % modes.length];
     localStorage.setItem(STORAGE_SORT, JSON.stringify(sortModes));
@@ -384,9 +429,9 @@
   });
 
   markAllBtn.addEventListener("click", () => {
-    const cat = getCategory(currentCategoryId);
+    const cat = selection();
     if (!confirm("Mark everything in " + cat.name + " as seen?")) return;
-    titlesIn(cat.id)
+    cat.items
       .filter((t) => !isUpcoming(t))
       .forEach((t) => setTitleSeen(t, seen, true));
     save();
@@ -394,9 +439,9 @@
   });
 
   clearAllBtn.addEventListener("click", () => {
-    const cat = getCategory(currentCategoryId);
+    const cat = selection();
     if (!confirm("Clear every checkmark in " + cat.name + "?")) return;
-    titlesIn(cat.id).forEach((t) => setTitleSeen(t, seen, false));
+    cat.items.forEach((t) => setTitleSeen(t, seen, false));
     save();
     render();
   });
@@ -406,8 +451,10 @@
   function open(id) {
     const item = TITLES.find((t) => t.id === id);
     if (!item) return;
-    currentCategoryId = item.cat;
-    localStorage.setItem(STORAGE_CATEGORY, currentCategoryId);
+    if (!selectedIds.includes(item.cat)) {
+      selectedIds = [item.cat];
+      saveSelection();
+    }
     searchTerm = item.title;
     searchInput.value = searchTerm;
     if (item.seasons || item.extras) {

@@ -60,19 +60,21 @@ order, numbered, with its release date, grouped under year headings.
 **By Title** lists each film and show once, split into the
 spreadsheet's Type categories: **Film / TV Series / Short Film / TV
 Special / Digital Series / NCU Film / NCU TV Series** ("NCU" = not part
-of the MCU).
+of the MCU). Tap categories on and off to show several at once (say
+Film + NCU Film, merged in release order and colour-coded by type), or
+**All** for everything.
 
 - Tap a series to expand it into seasons and episodes. Tap an episode
   number to check it off, or a season header to check off (or clear)
   the whole season.
 - Some classic shows also list their pilot movies, reunion TV movies,
   and web spin-offs inside the expanded panel.
-- **Release Order / Timeline Order** (on the tabs that are all Marvel
-  Studios titles) flips between release and story order; elsewhere it's
-  **Oldest / Newest First**.
+- **Release Order / Timeline Order** (when everything showing is a
+  Marvel Studios title) flips between release and story order;
+  otherwise it's **Oldest / Newest First**.
 - **Search** matches titles, years, phases ("phase 3"), and studios or
   networks ("netflix", "fox x-men").
-- **Mark All Seen / Clear All** apply to the current tab.
+- **Mark All Seen / Clear All** apply to the categories showing.
 
 **MCU Order** is just the Marvel Studios titles, one row per film or
 series, in **release** or **timeline** order, with its own Up Next

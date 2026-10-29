@@ -746,16 +746,19 @@ body {
 .cat-ncufilm { --cat: var(--c-ncufilm); }
 .cat-ncutv { --cat: var(--c-ncutv); }
 
-.master-row {
+.master-row,
+.typed-row {
   box-shadow: inset 5px 0 0 var(--cat);
   background: color-mix(in srgb, var(--cat) 7%, var(--grouped-bg));
 }
 
-.master-row:active {
+.master-row:active,
+.typed-row:active {
   background: color-mix(in srgb, var(--cat) 16%, var(--grouped-bg));
 }
 
 .master-row .type-tag,
+.typed-row .type-tag,
 .legend-chip {
   background: color-mix(in srgb, var(--cat) 18%, transparent);
   color: color-mix(in srgb, var(--cat) 80%, var(--label));
@@ -776,4 +779,9 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+}
+
+/* By Title: a switched-on category button picks up its type colour. */
+#category-segmented button.active[class*="cat-"] {
+  box-shadow: inset 0 -3px 0 var(--cat), 0 1px 3px rgba(0, 0, 0, 0.15);
 }
