@@ -90,6 +90,8 @@ EXTRA_SHOWS = {"Agents of S.H.I.E.L.D.: Slingshot": ("agents-of-shield", 0)}
 
 # (date, segment) for data.js titles the spreadsheet doesn't list.
 EXTRA_SEGMENTS = [
+    ("2018-12-14", {"id": "into-the-spider-verse"}),
+    ("2023-06-02", {"id": "across-the-spider-verse"}),
     ("2026-05-12", {"id": "punisher-one-last-kill"}),
     ("2026-05-27", {"id": "spider-noir", "s": 0, "e": 1}),
     ("2026-05-27", {"id": "spider-noir", "s": 0, "e": 2}),

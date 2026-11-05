@@ -6,7 +6,8 @@
 // non-MCU live-action film (Fox's X-Men and Fantastic Four, Sony's
 // Spider-Man and Spider-Man Universe, the pre-2008 one-offs, and the TV
 // movies), from Howard the Duck (1986) on. The animated Marvel Studios
-// series are included (they're in the MCU); non-MCU animation isn't.
+// series are included (they're in the MCU), as are Sony's two animated
+// Spider-Verse films; other non-MCU animation isn't.
 //
 // Cross-checked against the user's own MCU_Watch_Order.xlsx, which is
 // also what js/watchorder.js (the Master List order) is generated from.
@@ -228,10 +229,12 @@ const TITLES = [
   { id: "logan", cat: "ncufilm", title: "Logan", year: 2017, group: "Fox X-Men" },
   { id: "deadpool-2", cat: "ncufilm", title: "Deadpool 2", year: 2018, group: "Fox X-Men" },
   { id: "venom", cat: "ncufilm", title: "Venom", year: 2018, group: "Sony's Spider-Man Universe" },
+  { id: "into-the-spider-verse", cat: "ncufilm", title: "Spider-Man: Into the Spider-Verse", year: 2018, date: "2018-12-14", group: "Sony Pictures Animation", note: "Animated." },
   { id: "dark-phoenix", cat: "ncufilm", title: "Dark Phoenix", year: 2019, group: "Fox X-Men" },
   { id: "new-mutants", cat: "ncufilm", title: "The New Mutants", year: 2020, group: "Fox X-Men" },
   { id: "venom-2", cat: "ncufilm", title: "Venom: Let There Be Carnage", year: 2021, group: "Sony's Spider-Man Universe" },
   { id: "morbius", cat: "ncufilm", title: "Morbius", year: 2022, group: "Sony's Spider-Man Universe" },
+  { id: "across-the-spider-verse", cat: "ncufilm", title: "Spider-Man: Across the Spider-Verse", year: 2023, date: "2023-06-02", group: "Sony Pictures Animation", note: "Animated." },
   { id: "madame-web", cat: "ncufilm", title: "Madame Web", year: 2024, group: "Sony's Spider-Man Universe" },
   { id: "venom-last-dance", cat: "ncufilm", title: "Venom: The Last Dance", year: 2024, group: "Sony's Spider-Man Universe" },
   { id: "kraven", cat: "ncufilm", title: "Kraven the Hunter", year: 2024, group: "Sony's Spider-Man Universe" },
