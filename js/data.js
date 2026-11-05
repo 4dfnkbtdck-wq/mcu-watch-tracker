@@ -196,6 +196,7 @@ const TITLES = [
   { id: "runaways", cat: "ncutv", title: "Runaways", year: 2017, group: "Hulu · 2017–2019", seasons: [10, 13, 10] },
   { id: "cloak-and-dagger", cat: "ncutv", title: "Cloak & Dagger", year: 2018, group: "Freeform · 2018–2019", seasons: [10, 10] },
   { id: "helstrom", cat: "ncutv", title: "Helstrom", year: 2020, group: "Hulu · 2020", seasons: [10] },
+  { id: "spider-noir", cat: "ncutv", title: "Spider-Noir", year: 2026, date: "2026-05-27", group: "Prime Video · 2026", seasons: [8], note: "Nicolas Cage as a 1930s Spider-Man; all eight episodes released at once (MGM+ aired them two days earlier in the US)." },
 
   // ---------- Other Marvel Films ----------
   { id: "howard-the-duck", cat: "ncufilm", title: "Howard the Duck", year: 1986, group: "Universal" },
