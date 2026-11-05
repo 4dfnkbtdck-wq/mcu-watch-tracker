@@ -1,10 +1,10 @@
 (function () {
   "use strict";
 
-  const STORAGE_FILTER = "mcu-tracker:master-filter";
+  const STORAGE_TYPES = "mcu-tracker:types";
   const STORAGE_HIDE_SEEN = "mcu-tracker:master-hide-seen";
 
-  const filterSegmented = document.getElementById("m-filter-segmented");
+  const typeChips = document.getElementById("type-chips");
   const progressFill = document.getElementById("m-progress-fill");
   const progressLabel = document.getElementById("m-progress-label");
   const upNextEl = document.getElementById("m-up-next");
@@ -12,23 +12,21 @@
   const hideSeenBtn = document.getElementById("m-hide-seen");
   const masterList = document.getElementById("m-list");
 
-  const FILTERS = [
-    { id: "all", label: "Everything", test: () => true },
-    { id: "mcu", label: "MCU", test: (item) => isMcu(item) },
-    { id: "other", label: "Non-MCU", test: (item) => !isMcu(item) },
-  ];
-
   const titlesById = {};
   TITLES.forEach((t) => (titlesById[t.id] = t));
 
-  let filter = FILTERS.some((f) => f.id === localStorage.getItem(STORAGE_FILTER))
-    ? localStorage.getItem(STORAGE_FILTER)
-    : "all";
+  const ALL_TYPES = CATEGORIES.map((c) => c.id);
+  // The Types currently shown: any mix, tapped on and off (at least one stays on).
+  let selectedTypes = (function () {
+    const saved = loadJson(STORAGE_TYPES, ALL_TYPES);
+    const valid = ALL_TYPES.filter((id) => saved.includes(id));
+    return valid.length ? valid : ALL_TYPES.slice();
+  })();
   let hideSeen = localStorage.getItem(STORAGE_HIDE_SEEN) === "1";
   let searchTerm = "";
 
   function save() {
-    saveSeen();
+    localStorage.setItem(STORAGE_SEEN, JSON.stringify(seen));
   }
 
   // One entry per MASTER_LIST row: what to show and the storage keys
@@ -77,35 +75,35 @@
   }
 
   function visibleEntries() {
-    const test = FILTERS.find((f) => f.id === filter).test;
-    return ENTRIES.filter((en) => test(en.item));
+    return ENTRIES.filter((en) => selectedTypes.includes(en.cat.id));
   }
 
-  // Colour key: one chip per Type, in that Type's colour.
-  function buildLegend() {
-    const legend = document.getElementById("m-legend");
-    legend.innerHTML = "";
-    CATEGORIES.forEach((cat) => {
-      const chip = document.createElement("span");
-      chip.className = "legend-chip cat-" + cat.id;
-      chip.textContent = cat.short;
-      legend.appendChild(chip);
-    });
-  }
-
-  function buildSegmented() {
-    filterSegmented.innerHTML = "";
-    FILTERS.forEach((f) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.textContent = f.label;
-      if (f.id === filter) btn.classList.add("active");
-      btn.addEventListener("click", () => {
-        filter = f.id;
-        localStorage.setItem(STORAGE_FILTER, filter);
+  // Type chips double as the colour key and the filter: tap one to
+  // show or hide that Type; "All" turns every Type back on.
+  function buildChips() {
+    typeChips.innerHTML = "";
+    const addChip = (label, active, catId, onClick) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "type-chip" + (catId ? " cat-" + catId : " all-chip") + (active ? " active" : "");
+      chip.textContent = label;
+      chip.setAttribute("aria-pressed", String(active));
+      chip.addEventListener("click", () => {
+        onClick();
+        localStorage.setItem(STORAGE_TYPES, JSON.stringify(selectedTypes));
         render();
       });
-      filterSegmented.appendChild(btn);
+      typeChips.appendChild(chip);
+    };
+    addChip("All", selectedTypes.length === ALL_TYPES.length, null, () => {
+      selectedTypes = ALL_TYPES.slice();
+    });
+    CATEGORIES.forEach((cat) => {
+      const on = selectedTypes.includes(cat.id);
+      addChip(cat.short, on, cat.id, () => {
+        if (on && selectedTypes.length === 1) return;
+        selectedTypes = ALL_TYPES.filter((id) => (id === cat.id ? !on : selectedTypes.includes(id)));
+      });
     });
   }
 
@@ -237,7 +235,7 @@
   }
 
   function render() {
-    buildSegmented();
+    buildChips();
     hideSeenBtn.textContent = hideSeen ? "Show Watched" : "Hide Watched";
 
     const entries = visibleEntries();
@@ -287,6 +285,5 @@
     render();
   });
 
-  buildLegend();
-  Views.master = { render };
+  render();
 })();

@@ -9,41 +9,33 @@
 // series are included (they're in the MCU); non-MCU animation isn't.
 //
 // Cross-checked against the user's own MCU_Watch_Order.xlsx, which is
-// also what js/watchorder.js (the "Everything" watch order) is
-// generated from.
+// also what js/watchorder.js (the Master List order) is generated from.
 //
 // Each title:
 //   id       unique, stable — it's the localStorage key, so never
 //            rename one once it ships or people lose their checkmarks
-//   cat      which tab it lives on (see CATEGORIES)
+//   cat      its Type (see CATEGORIES)
 //   title    display title
 //   year     release year
-//   date     US release date (MCU titles only) — orders the combined
-//            Watch Order list across films, series and specials
-//   t        MCU in-universe timeline position (MCU titles only).
-//            Series are placed by their first season. Decimals slot a
-//            title between two others without renumbering.
+//   date     US release date (MCU and recent titles) — the Master List
+//            uses it for the title's row; later ones count as upcoming
+//   t        MCU in-universe timeline position (MCU titles only; not
+//            currently shown, kept for a possible timeline view).
 //   phase    MCU phase (MCU titles only)
-//   seasons  episode counts, one entry per season — makes the row
-//            expandable into a season/episode checklist
-//   extras   tie-in pilots, TV movies and web spin-offs, checked off
-//            separately: { title, year, seasons?, after?, note? } —
-//            "after" is the 0-based season it's listed after when the
-//            show is expanded (-1 = before season 1; default: the end)
+//   seasons  episode counts, one entry per season
+//   extras   tie-in web spin-offs, checked off separately:
+//            { title, year, seasons?, after?, note? }
 //   group    studio / network / franchise label shown under the title
 //   kind     "Short", "Special", "Digital Series" or "Animated"
 //   upcoming display string for a title that isn't out yet. Anything
 //            dated after today is treated as upcoming (shown, but can't
 //            be checked off and doesn't count toward progress) — so
 //            titles unlock by themselves on release day.
-//   note     extra context shown under the row
-//
-// Within each tab, titles are listed in release order — the "Oldest
-// First" / "Release Order" sort is just this array order.
+//   note     extra context about the title
 //
 // Corrections are just edits to the array below.
 
-// The By Title tabs, matching the "Type" column of the spreadsheet.
+// The Types, matching the "Type" column of the spreadsheet.
 // "mcu" marks a category as MCU for the Master List's MCU / Non-MCU
 // filter (a title can override it with its own mcu: false).
 const CATEGORIES = [

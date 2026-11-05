@@ -41,51 +41,25 @@ worker caches the app so it keeps working with no signal.
 
 ## Using it
 
-The app has three tabs along the bottom. They all live on one page, so
-switching is instant and each tab remembers where you'd scrolled to;
-tapping the tab you're already on scrolls back to the top.
-
-**Master List** (the home screen) works like the spreadsheet: every
-film, short, and TV episode, MCU or not, one row each, in release
-order, numbered, with its release date, grouped under year headings.
+The app is one screen, the **Master List**, which works like the
+spreadsheet: every film, short, and TV episode, MCU or not, one row
+each, in release order, numbered, with its release date, grouped under
+year headings, and colour-coded by Type.
 
 - Tap a row to check it off. Tap a row's **number** to mark everything
   up to that point as watched (handy when you're starting out).
-- **Everything / MCU / Non-MCU** filters the list.
+- The **Type chips** at the top (**Film / TV Series / Short Film / TV
+  Special / Digital Series / NCU Film / NCU TV Series**, "NCU" = not
+  part of the MCU) are both the colour key and the filter: tap them on
+  and off to show any mix, say Film + NCU Film. **All** turns every
+  Type back on.
 - The **Up Next** card shows the first thing you haven't watched; tap
   it to jump there.
 - **Hide Watched** trims the list down to what's left, and **Search**
   finds a title.
-
-**By Title** lists each film and show once, split into the
-spreadsheet's Type categories: **Film / TV Series / Short Film / TV
-Special / Digital Series / NCU Film / NCU TV Series** ("NCU" = not part
-of the MCU). Tap categories on and off to show several at once (say
-Film + NCU Film, merged in release order and colour-coded by type), or
-**All** for everything.
-
-- Tap a series to expand it into seasons and episodes. Tap an episode
-  number to check it off, or a season header to check off (or clear)
-  the whole season.
-- Some classic shows also list their pilot movies, reunion TV movies,
-  and web spin-offs inside the expanded panel.
-- **Release Order / Timeline Order** (when everything showing is a
-  Marvel Studios title) flips between release and story order;
-  otherwise it's **Oldest / Newest First**.
-- **Search** matches titles, years, phases ("phase 3"), and studios or
-  networks ("netflix", "fox x-men").
-- **Mark All Seen / Clear All** apply to the categories showing.
-
-**MCU Order** is just the Marvel Studios titles, one row per film or
-series, in **release** or **timeline** order, with its own Up Next
-card. Tapping a series opens it on By Title, expanded.
-
-All three tabs share the same checkmarks: an episode checked off in
-one place is checked off everywhere.
-
-Upcoming titles (Avengers: Doomsday, VisionQuest, Avengers: Secret
-Wars) are listed with their release window but can't be checked off
-yet and don't count toward progress.
+- Anything dated after today (upcoming films, or a weekly show's
+  later episodes) is listed with its date but can't be checked off
+  until release day, and doesn't count toward progress.
 
 Nothing is synced anywhere. Checkmarks live only in the browser you
 made them in (`localStorage`).
