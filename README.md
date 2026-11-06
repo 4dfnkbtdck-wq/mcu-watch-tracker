@@ -60,6 +60,15 @@ year headings, and colour-coded by Type.
   it to jump there.
 - **Hide Watched** trims the list down to what's left, and **Search**
   finds a title.
+- The **year strip** above the list stays at the top as you scroll,
+  highlights the year you're in, and jumps to any year you tap.
+- Every change pops up an **Undo** bar for a few seconds, including
+  marking everything up to a row and restoring a backup.
+- **Back Up** saves all your checkmarks to a small file (on iPhone it
+  opens the share sheet, so you can save it to Files / iCloud Drive or
+  email it to yourself). **Restore** loads one back, replacing what's
+  there. Worth doing now and then, since checkmarks otherwise live only
+  in this browser.
 - Anything dated after today (upcoming films, or a weekly show's
   later episodes) is listed with its date but can't be checked off
   until release day, and doesn't count toward progress.

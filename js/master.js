@@ -11,6 +11,11 @@
   const searchInput = document.getElementById("m-search");
   const hideSeenBtn = document.getElementById("m-hide-seen");
   const masterList = document.getElementById("m-list");
+  const yearBar = document.getElementById("year-bar");
+  const toast = document.getElementById("toast");
+  const backupBtn = document.getElementById("backup-btn");
+  const restoreBtn = document.getElementById("restore-btn");
+  const restoreInput = document.getElementById("restore-input");
 
   const titlesById = {};
   TITLES.forEach((t) => (titlesById[t.id] = t));
@@ -63,15 +68,61 @@
     return entry;
   });
 
-  function isSeen(entry) {
-    return entry.keys.every((k) => seen[k]);
-  }
+  // ---------- Undo ----------
+  // Every change goes through changeSeen(), which remembers what it
+  // overwrote so the toast's Undo button can put it back.
+  let undoState = null;
+  let toastTimer = null;
 
-  function setSeen(entry, value) {
-    entry.keys.forEach((k) => {
+  function changeSeen(keys, value, message) {
+    const before = {};
+    keys.forEach((k) => {
+      if (!!seen[k] !== value) before[k] = !!seen[k];
+    });
+    keys.forEach((k) => {
       if (value) seen[k] = true;
       else delete seen[k];
     });
+    save();
+    if (Object.keys(before).length) showUndo(message, before);
+  }
+
+  function showUndo(message, before) {
+    undoState = before;
+    toast.innerHTML = "";
+    const text = document.createElement("span");
+    text.className = "toast-text";
+    text.textContent = message;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "toast-undo";
+    btn.textContent = "Undo";
+    btn.addEventListener("click", undo);
+    toast.appendChild(text);
+    toast.appendChild(btn);
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideToast, 6000);
+  }
+
+  function hideToast() {
+    toast.classList.remove("show");
+    undoState = null;
+  }
+
+  function undo() {
+    if (!undoState) return;
+    Object.entries(undoState).forEach(([k, was]) => {
+      if (was) seen[k] = true;
+      else delete seen[k];
+    });
+    save();
+    hideToast();
+    render();
+  }
+
+  function isSeen(entry) {
+    return entry.keys.every((k) => seen[k]);
   }
 
   function visibleEntries() {
@@ -216,8 +267,8 @@
 
     row.addEventListener("click", () => {
       const now = !isSeen(entry);
-      setSeen(entry, now);
-      save();
+      const label = entry.title + (entry.detail ? " · " + entry.detail : "");
+      changeSeen(entry.keys, now, (now ? "Watched: " : "Unwatched: ") + label);
       if (hideSeen && now) {
         render();
         return;
@@ -230,10 +281,11 @@
     num.addEventListener("click", (ev) => {
       ev.stopPropagation();
       if (!confirm("Mark everything from #1 to #" + number + " as watched?")) return;
+      const keys = [];
       entries.slice(0, number).forEach((en) => {
-        if (!en.upcoming) setSeen(en, true);
+        if (!en.upcoming) keys.push(...en.keys);
       });
-      save();
+      changeSeen(keys, true, "Marked #1–#" + number + " as watched");
       render();
     });
 
@@ -252,6 +304,7 @@
     let currentYear = null;
     let currentList = null;
     let shown = 0;
+    const years = [];
 
     entries.forEach((entry, idx) => {
       if (hideSeen && isSeen(entry)) return;
@@ -263,7 +316,9 @@
         currentYear = year;
         const header = document.createElement("h2");
         header.className = "year-header";
+        header.id = "year-" + year;
         header.textContent = year;
+        years.push(year);
         masterList.appendChild(header);
         currentList = document.createElement("ul");
         currentList.className = "ios-list";
@@ -278,7 +333,141 @@
       empty.textContent = term ? "No matches." : "Nothing left to watch here.";
       masterList.appendChild(empty);
     }
+    buildYearBar(years);
   }
+
+  // ---------- Jump to a year ----------
+  // A sticky strip of the years in the list; tap one to jump to it. The
+  // year you're scrolled to is highlighted as you go.
+  function buildYearBar(years) {
+    yearBar.innerHTML = "";
+    yearBar.hidden = years.length < 2;
+    years.forEach((year) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "year-chip";
+      btn.dataset.year = year;
+      btn.textContent = year;
+      btn.addEventListener("click", () => {
+        const header = document.getElementById("year-" + year);
+        if (header) header.scrollIntoView({ block: "start" });
+      });
+      yearBar.appendChild(btn);
+    });
+    updateStickyOffset();
+    highlightYear();
+  }
+
+  // Keep year headers clear of the sticky navbar + year strip when jumped to.
+  function updateStickyOffset() {
+    const navbar = document.querySelector(".navbar");
+    const navH = navbar ? navbar.offsetHeight : 0;
+    yearBar.style.top = navH + "px";
+    document.documentElement.style.setProperty("--sticky-offset", navH + yearBar.offsetHeight + 8 + "px");
+  }
+
+  let activeYear = null;
+  function highlightYear() {
+    const limit = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sticky-offset")) || 0;
+    let current = null;
+    for (const header of masterList.querySelectorAll(".year-header")) {
+      if (header.getBoundingClientRect().top <= limit + 4) current = header.id.slice(5);
+      else break;
+    }
+    if (!current) {
+      const first = yearBar.querySelector(".year-chip");
+      current = first ? first.dataset.year : null;
+    }
+    if (current === activeYear && yearBar.querySelector(".year-chip.active")) return;
+    activeYear = current;
+    yearBar.querySelectorAll(".year-chip").forEach((chip) => {
+      const on = chip.dataset.year === current;
+      chip.classList.toggle("active", on);
+      if (on) {
+        // Scroll the strip itself (not the page) so the active year stays visible.
+        const left = chip.offsetLeft - (yearBar.clientWidth - chip.offsetWidth) / 2;
+        yearBar.scrollTo({ left: Math.max(0, left) });
+      }
+    });
+  }
+
+  let scrollQueued = false;
+  window.addEventListener("scroll", () => {
+    if (scrollQueued) return;
+    scrollQueued = true;
+    requestAnimationFrame(() => {
+      scrollQueued = false;
+      highlightYear();
+    });
+  }, { passive: true });
+  window.addEventListener("resize", updateStickyOffset);
+
+  // ---------- Backup ----------
+  // "Back Up" saves every checkmark to a small file (via the share sheet
+  // on iPhone, so it can go to Files, iCloud Drive, Mail...). "Restore"
+  // reads one back in, replacing what's here (with Undo).
+  backupBtn.addEventListener("click", async () => {
+    const data = {
+      app: "mcu-watch-tracker",
+      version: 1,
+      exported: new Date().toISOString(),
+      seen: seen,
+    };
+    const name = "mcu-watch-tracker-backup-" + TODAY + ".json";
+    const blob = new Blob([JSON.stringify(data, null, 1)], { type: "application/json" });
+    const file = typeof File === "function" ? new File([blob], name, { type: "application/json" }) : null;
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "MCU Watch Tracker backup" });
+        return;
+      } catch (e) {
+        if (e && e.name === "AbortError") return; // closed the share sheet
+      }
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  });
+
+  restoreBtn.addEventListener("click", () => restoreInput.click());
+
+  restoreInput.addEventListener("change", () => {
+    const file = restoreInput.files && restoreInput.files[0];
+    restoreInput.value = "";
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      let incoming;
+      try {
+        const data = JSON.parse(reader.result);
+        incoming = data && data.app === "mcu-watch-tracker" && data.seen;
+        if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) throw new Error("bad");
+      } catch (e) {
+        alert("That file isn't an MCU Watch Tracker backup.");
+        return;
+      }
+      const keys = Object.keys(incoming).filter((k) => incoming[k] === true);
+      const current = Object.keys(seen).length;
+      if (!confirm("Replace your current checkmarks (" + current + ") with the ones in this backup (" + keys.length + ")?")) return;
+      const before = {};
+      new Set([...Object.keys(seen), ...keys]).forEach((k) => {
+        const was = !!seen[k];
+        const now = incoming[k] === true;
+        if (was !== now) before[k] = was;
+      });
+      Object.keys(seen).forEach((k) => delete seen[k]);
+      keys.forEach((k) => (seen[k] = true));
+      save();
+      render();
+      showUndo("Restored " + keys.length + (keys.length === 1 ? " checkmark" : " checkmarks") + " from backup", before);
+    };
+    reader.readAsText(file);
+  });
 
   hideSeenBtn.addEventListener("click", () => {
     hideSeen = !hideSeen;

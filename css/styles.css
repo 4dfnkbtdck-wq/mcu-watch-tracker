@@ -497,3 +497,98 @@ body {
   background: var(--label);
   color: var(--bg);
 }
+
+/* ---------- Jump to year ---------- */
+
+.year-bar {
+  position: sticky;
+  z-index: 5;
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 -1rem 0.2rem;
+  padding: 0.45rem 1rem;
+  background: var(--navbar-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.year-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.year-chip {
+  flex-shrink: 0;
+  border: none;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: var(--grouped-bg);
+  color: var(--label-secondary);
+  cursor: pointer;
+}
+
+.year-chip.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.year-header {
+  scroll-margin-top: var(--sticky-offset, 6rem);
+}
+
+/* ---------- Undo toast ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 20;
+  width: min(calc(100% - 2rem), 528px);
+  transform: translate(-50%, 150%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.6rem 0.7rem 1rem;
+  border-radius: 14px;
+  background: #1c1c1e;
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease;
+}
+
+.toast.show {
+  transform: translate(-50%, 0);
+}
+
+.toast-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.86rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toast-undo {
+  flex-shrink: 0;
+  border: none;
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 0.4rem 0.8rem;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .toast {
+    background: #3a3a3c;
+  }
+}
