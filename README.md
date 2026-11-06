@@ -52,9 +52,10 @@ year headings, and colour-coded by Type.
   up to that point as watched (handy when you're starting out).
 - The **Type chips** at the top (**Film / TV Series / Short Film / TV
   Special / Digital Series / NCU Film / NCU TV Series**, "NCU" = not
-  part of the MCU) are both the colour key and the filter: tap them on
-  and off to show any mix, say Film + NCU Film. **All** turns every
-  Type back on.
+  part of the MCU) are both the colour key and the filter. With **All**
+  on, tapping a Type shows just that Type; each further tap adds or
+  removes one, so Film then NCU Film shows both. Removing the last one,
+  or tapping **All**, shows everything again.
 - The **Up Next** card shows the first thing you haven't watched; tap
   it to jump there.
 - **Hide Watched** trims the list down to what's left, and **Search**

@@ -465,7 +465,8 @@ body {
 }
 
 /* Type chips are the colour key and the filter: on = tinted in the
-   Type's colour, off = plain and faded. */
+   Type's colour, off = plain and faded (as they all are while "All"
+   is on). */
 .type-chip {
   border: none;
   font-family: inherit;

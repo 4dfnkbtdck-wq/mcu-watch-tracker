@@ -78,10 +78,12 @@
     return ENTRIES.filter((en) => selectedTypes.includes(en.cat.id));
   }
 
-  // Type chips double as the colour key and the filter: tap one to
-  // show or hide that Type; "All" turns every Type back on.
+  // Type chips double as the colour key and the filter. With "All" on,
+  // tapping a Type shows just that Type; after that, each tap adds or
+  // removes one. Removing the last one (or tapping "All") shows everything.
   function buildChips() {
     typeChips.innerHTML = "";
+    const showingAll = selectedTypes.length === ALL_TYPES.length;
     const addChip = (label, active, catId, onClick) => {
       const chip = document.createElement("button");
       chip.type = "button";
@@ -95,14 +97,18 @@
       });
       typeChips.appendChild(chip);
     };
-    addChip("All", selectedTypes.length === ALL_TYPES.length, null, () => {
+    addChip("All", showingAll, null, () => {
       selectedTypes = ALL_TYPES.slice();
     });
     CATEGORIES.forEach((cat) => {
-      const on = selectedTypes.includes(cat.id);
+      const on = !showingAll && selectedTypes.includes(cat.id);
       addChip(cat.short, on, cat.id, () => {
-        if (on && selectedTypes.length === 1) return;
+        if (showingAll) {
+          selectedTypes = [cat.id];
+          return;
+        }
         selectedTypes = ALL_TYPES.filter((id) => (id === cat.id ? !on : selectedTypes.includes(id)));
+        if (selectedTypes.length === 0) selectedTypes = ALL_TYPES.slice();
       });
     });
   }
